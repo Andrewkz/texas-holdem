@@ -1,0 +1,19 @@
+{
+  "name": "texas-holdem",
+  "uuid": "bf1dbabd-079c-443d-abe2-09091a2a746f",
+  "creator": {
+    "version": "3.8.8"
+  },
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck:game": "tsc --noEmit -p tsconfig.game.json"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.3",
+    "vitest": "^2.1.9"
+  },
+  "version": "3.8.8"
+}

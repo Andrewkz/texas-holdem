@@ -1,0 +1,4044 @@
+{
+  "version": "2.17",
+  "children": [
+    {
+      "type": "frame",
+      "id": "IkEeE",
+      "x": 880,
+      "y": 0,
+      "name": "Foundations",
+      "clip": true,
+      "width": 1280,
+      "height": 460,
+      "fill": "#071121",
+      "cornerRadius": 18,
+      "stroke": "#2A405A",
+      "strokeWidth": 1,
+      "layout": "vertical",
+      "gap": 22,
+      "padding": 32,
+      "children": [
+        {
+          "type": "text",
+          "id": "yYrQA",
+          "name": "Foundations Title",
+          "fill": "$text-primary",
+          "content": "FOUNDATIONS / 设计基础",
+          "fontFamily": "$font-heading",
+          "fontSize": 28,
+          "fontWeight": "700",
+          "letterSpacing": 1
+        },
+        {
+          "type": "text",
+          "id": "FcoLc",
+          "name": "Foundations Subtitle",
+          "fill": "$text-muted",
+          "content": "六人虚拟筹码现金桌 · 深蓝 / 墨绿 / 金色",
+          "fontFamily": "$font-body",
+          "fontSize": 14,
+          "fontWeight": "normal"
+        },
+        {
+          "type": "frame",
+          "id": "Y5EoO",
+          "name": "Color Swatches",
+          "width": "fill_container",
+          "gap": 16,
+          "children": [
+            {
+              "type": "frame",
+              "id": "ijHzq",
+              "name": "Swatch 深蓝背景",
+              "width": 189.3,
+              "layout": "vertical",
+              "gap": 10,
+              "children": [
+                {
+                  "type": "rectangle",
+                  "cornerRadius": 8,
+                  "id": "X7udgW",
+                  "name": "深蓝背景 Color",
+                  "fill": "#0B162B",
+                  "width": "fill_container",
+                  "height": 70,
+                  "stroke": "#FFFFFF26",
+                  "strokeWidth": 1
+                },
+                {
+                  "type": "text",
+                  "id": "e6dzK",
+                  "name": "深蓝背景 Label",
+                  "fill": "$text-primary",
+                  "content": "深蓝背景",
+                  "fontFamily": "$font-body",
+                  "fontSize": 13,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "YtVej",
+                  "name": "深蓝背景 Hex",
+                  "fill": "$text-muted",
+                  "content": "#0B162B",
+                  "fontFamily": "$font-caption",
+                  "fontSize": 11,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "S5wbIr",
+              "name": "Swatch 顶部栏",
+              "width": 189.3,
+              "layout": "vertical",
+              "gap": 10,
+              "children": [
+                {
+                  "type": "rectangle",
+                  "cornerRadius": 8,
+                  "id": "Stlwb",
+                  "name": "顶部栏 Color",
+                  "fill": "#182C47",
+                  "width": "fill_container",
+                  "height": 70,
+                  "stroke": "#FFFFFF26",
+                  "strokeWidth": 1
+                },
+                {
+                  "type": "text",
+                  "id": "L3fuPg",
+                  "name": "顶部栏 Label",
+                  "fill": "$text-primary",
+                  "content": "顶部栏",
+                  "fontFamily": "$font-body",
+                  "fontSize": 13,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "P9TnZ",
+                  "name": "顶部栏 Hex",
+                  "fill": "$text-muted",
+                  "content": "#182C47",
+                  "fontFamily": "$font-caption",
+                  "fontSize": 11,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "au96g",
+              "name": "Swatch 弹层",
+              "width": 189.3,
+              "layout": "vertical",
+              "gap": 10,
+              "children": [
+                {
+                  "type": "rectangle",
+                  "cornerRadius": 8,
+                  "id": "ZkiQ4",
+                  "name": "弹层 Color",
+                  "fill": "#14304A",
+                  "width": "fill_container",
+                  "height": 70,
+                  "stroke": "#FFFFFF26",
+                  "strokeWidth": 1
+                },
+                {
+                  "type": "text",
+                  "id": "KCdvC",
+                  "name": "弹层 Label",
+                  "fill": "$text-primary",
+                  "content": "弹层",
+                  "fontFamily": "$font-body",
+                  "fontSize": 13,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "FEylA",
+                  "name": "弹层 Hex",
+                  "fill": "$text-muted",
+                  "content": "#14304A",
+                  "fontFamily": "$font-caption",
+                  "fontSize": 11,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "PnLPI",
+              "name": "Swatch 椭圆牌桌",
+              "width": 189.3,
+              "layout": "vertical",
+              "gap": 10,
+              "children": [
+                {
+                  "type": "rectangle",
+                  "cornerRadius": 8,
+                  "id": "F1i3PG",
+                  "name": "椭圆牌桌 Color",
+                  "fill": "#217E5E",
+                  "width": "fill_container",
+                  "height": 70,
+                  "stroke": "#FFFFFF26",
+                  "strokeWidth": 1
+                },
+                {
+                  "type": "text",
+                  "id": "B3oJIr",
+                  "name": "椭圆牌桌 Label",
+                  "fill": "$text-primary",
+                  "content": "椭圆牌桌",
+                  "fontFamily": "$font-body",
+                  "fontSize": 13,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "vNfWk",
+                  "name": "椭圆牌桌 Hex",
+                  "fill": "$text-muted",
+                  "content": "#217E5E",
+                  "fontFamily": "$font-caption",
+                  "fontSize": 11,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "hz1TJ",
+              "name": "Swatch 金色强调",
+              "width": 189.3,
+              "layout": "vertical",
+              "gap": 10,
+              "children": [
+                {
+                  "type": "rectangle",
+                  "cornerRadius": 8,
+                  "id": "K6yFRu",
+                  "name": "金色强调 Color",
+                  "fill": "#F5C051",
+                  "width": "fill_container",
+                  "height": 70,
+                  "stroke": "#FFFFFF26",
+                  "strokeWidth": 1
+                },
+                {
+                  "type": "text",
+                  "id": "GeHj1",
+                  "name": "金色强调 Label",
+                  "fill": "$text-primary",
+                  "content": "金色强调",
+                  "fontFamily": "$font-body",
+                  "fontSize": 13,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "H5Tc9",
+                  "name": "金色强调 Hex",
+                  "fill": "$text-muted",
+                  "content": "#F5C051",
+                  "fontFamily": "$font-caption",
+                  "fontSize": 11,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "gpnGp",
+              "name": "Swatch 主要文字",
+              "width": 189.3,
+              "layout": "vertical",
+              "gap": 10,
+              "children": [
+                {
+                  "type": "rectangle",
+                  "cornerRadius": 8,
+                  "id": "r3xuX",
+                  "name": "主要文字 Color",
+                  "fill": "#F0F9FF",
+                  "width": "fill_container",
+                  "height": 70,
+                  "stroke": "#FFFFFF26",
+                  "strokeWidth": 1
+                },
+                {
+                  "type": "text",
+                  "id": "eCLRd",
+                  "name": "主要文字 Label",
+                  "fill": "$text-primary",
+                  "content": "主要文字",
+                  "fontFamily": "$font-body",
+                  "fontSize": 13,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "CRzm2",
+                  "name": "主要文字 Hex",
+                  "fill": "$text-muted",
+                  "content": "#F0F9FF",
+                  "fontFamily": "$font-caption",
+                  "fontSize": 11,
+                  "fontWeight": "normal"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "id": "m9tvuV",
+          "name": "Radius Heading",
+          "fill": "$text-primary",
+          "content": "圆角规范",
+          "fontFamily": "$font-heading",
+          "fontSize": 16,
+          "fontWeight": "650"
+        },
+        {
+          "type": "frame",
+          "id": "IvCEP",
+          "name": "Radius Values",
+          "width": "fill_container",
+          "gap": 16,
+          "children": [
+            {
+              "type": "frame",
+              "id": "tzfxn",
+              "name": "Radius 状态栏",
+              "width": 292,
+              "height": 60,
+              "fill": "#0E2037",
+              "cornerRadius": 18,
+              "stroke": "#34506E",
+              "strokeWidth": 1,
+              "gap": 12,
+              "padding": [
+                0,
+                14
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "B6o2y3",
+                  "name": "状态栏 Radius Value",
+                  "fill": "$gold",
+                  "content": "18",
+                  "fontFamily": "$font-heading",
+                  "fontSize": 24,
+                  "fontWeight": "700"
+                },
+                {
+                  "type": "text",
+                  "id": "K53TYO",
+                  "name": "状态栏 Radius Label",
+                  "fill": "$text-primary",
+                  "content": "状态栏",
+                  "fontFamily": "$font-body",
+                  "fontSize": 13,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "HMAnM",
+              "name": "Radius 座位",
+              "width": 292,
+              "height": 60,
+              "fill": "#0E2037",
+              "cornerRadius": 16,
+              "stroke": "#34506E",
+              "strokeWidth": 1,
+              "gap": 12,
+              "padding": [
+                0,
+                14
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "QPvLd",
+                  "name": "座位 Radius Value",
+                  "fill": "$gold",
+                  "content": "16",
+                  "fontFamily": "$font-heading",
+                  "fontSize": 24,
+                  "fontWeight": "700"
+                },
+                {
+                  "type": "text",
+                  "id": "a41uL",
+                  "name": "座位 Radius Label",
+                  "fill": "$text-primary",
+                  "content": "座位",
+                  "fontFamily": "$font-body",
+                  "fontSize": 13,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "Lp5Pl",
+              "name": "Radius 按钮",
+              "width": 292,
+              "height": 60,
+              "fill": "#0E2037",
+              "cornerRadius": 11,
+              "stroke": "#34506E",
+              "strokeWidth": 1,
+              "gap": 12,
+              "padding": [
+                0,
+                14
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "lurHo",
+                  "name": "按钮 Radius Value",
+                  "fill": "$gold",
+                  "content": "11",
+                  "fontFamily": "$font-heading",
+                  "fontSize": 24,
+                  "fontWeight": "700"
+                },
+                {
+                  "type": "text",
+                  "id": "KcWQe",
+                  "name": "按钮 Radius Label",
+                  "fill": "$text-primary",
+                  "content": "按钮",
+                  "fontFamily": "$font-body",
+                  "fontSize": 13,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "Lrc5a",
+              "name": "Radius 输入框",
+              "width": 292,
+              "height": 60,
+              "fill": "#0E2037",
+              "cornerRadius": 8,
+              "stroke": "#34506E",
+              "strokeWidth": 1,
+              "gap": 12,
+              "padding": [
+                0,
+                14
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "e4hhHT",
+                  "name": "输入框 Radius Value",
+                  "fill": "$gold",
+                  "content": "8",
+                  "fontFamily": "$font-heading",
+                  "fontSize": 24,
+                  "fontWeight": "700"
+                },
+                {
+                  "type": "text",
+                  "id": "UfNVH",
+                  "name": "输入框 Radius Label",
+                  "fill": "$text-primary",
+                  "content": "输入框",
+                  "fontFamily": "$font-body",
+                  "fontSize": 13,
+                  "fontWeight": "normal"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "S9f3Do",
+      "x": 880,
+      "y": 540,
+      "name": "Components",
+      "clip": true,
+      "width": 1280,
+      "height": 650,
+      "fill": "#071121",
+      "cornerRadius": 18,
+      "stroke": "#2A405A",
+      "strokeWidth": 1,
+      "layout": "vertical",
+      "gap": 18,
+      "padding": 32,
+      "children": [
+        {
+          "type": "text",
+          "id": "OPiRD",
+          "name": "Components Title",
+          "fill": "$text-primary",
+          "content": "COMPONENTS / 可复用组件",
+          "fontFamily": "$font-heading",
+          "fontSize": 28,
+          "fontWeight": "700",
+          "letterSpacing": 1
+        },
+        {
+          "type": "text",
+          "id": "XIF7P",
+          "name": "Components Subtitle",
+          "fill": "$text-muted",
+          "content": "牌面、座位、筹码、状态信息与操作按钮",
+          "fontFamily": "$font-body",
+          "fontSize": 14,
+          "fontWeight": "normal"
+        },
+        {
+          "type": "frame",
+          "id": "bgBW4",
+          "name": "Cards and Chip Showcase",
+          "width": "fill_container",
+          "height": 142,
+          "gap": 28,
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "E6IIE",
+              "name": "Card Face Examples",
+              "layout": "vertical",
+              "gap": 8,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "UEwNJ",
+                  "name": "Card Face Caption",
+                  "fill": "$text-muted",
+                  "content": "Card / Face",
+                  "fontFamily": "$font-caption",
+                  "fontSize": 11,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "frame",
+                  "id": "Kipg2",
+                  "name": "Face Examples Row",
+                  "gap": 10,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "p51HtV",
+                      "name": "Card / Face",
+                      "reusable": true,
+                      "width": 76,
+                      "height": 108,
+                      "fill": "#F7FBFF",
+                      "cornerRadius": 8,
+                      "stroke": "#D7E4EC",
+                      "strokeWidth": 1,
+                      "effect": {
+                        "type": "shadow",
+                        "shadowType": "outer",
+                        "color": "#00000055",
+                        "offset": {
+                          "x": 0,
+                          "y": 4
+                        },
+                        "blur": 10
+                      },
+                      "layout": "none",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "P4P8R",
+                          "x": 8,
+                          "y": 6,
+                          "name": "Card Rank",
+                          "fill": "#D43B42",
+                          "content": "K",
+                          "fontFamily": "$font-heading",
+                          "fontSize": 22,
+                          "fontWeight": "750"
+                        },
+                        {
+                          "type": "text",
+                          "id": "WcOQw",
+                          "x": 9,
+                          "y": 31,
+                          "name": "Card Suit",
+                          "fill": "#D43B42",
+                          "content": "♦",
+                          "fontFamily": "$font-body",
+                          "fontSize": 18,
+                          "fontWeight": "700"
+                        },
+                        {
+                          "type": "text",
+                          "id": "cCzh7",
+                          "x": 24,
+                          "y": 38,
+                          "name": "Card Center Suit",
+                          "fill": "#D43B42",
+                          "content": "♦",
+                          "fontFamily": "$font-body",
+                          "fontSize": 34,
+                          "fontWeight": "700"
+                        }
+                      ]
+                    },
+                    {
+                      "id": "M8fwEa",
+                      "type": "ref",
+                      "ref": "p51HtV",
+                      "name": "Card Face Black Example",
+                      "width": 76,
+                      "height": 108,
+                      "descendants": {
+                        "P4P8R": {
+                          "content": "9",
+                          "fill": "#172033"
+                        },
+                        "WcOQw": {
+                          "content": "♠",
+                          "fill": "#172033"
+                        },
+                        "cCzh7": {
+                          "content": "♠",
+                          "fill": "#172033"
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "qYj8K",
+              "name": "Card Back Example",
+              "layout": "vertical",
+              "gap": 8,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "DZflp",
+                  "name": "Card Back Caption",
+                  "fill": "$text-muted",
+                  "content": "Card / Back",
+                  "fontFamily": "$font-caption",
+                  "fontSize": 11,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "frame",
+                  "id": "IcYdJ",
+                  "name": "Card / Back",
+                  "reusable": true,
+                  "width": 76,
+                  "height": 108,
+                  "fill": "#132B49",
+                  "cornerRadius": 8,
+                  "stroke": "#49769A",
+                  "strokeWidth": 2,
+                  "effect": {
+                    "type": "shadow",
+                    "shadowType": "outer",
+                    "color": "#00000055",
+                    "offset": {
+                      "x": 0,
+                      "y": 4
+                    },
+                    "blur": 10
+                  },
+                  "layout": "none",
+                  "children": [
+                    {
+                      "type": "rectangle",
+                      "cornerRadius": 5,
+                      "id": "XMxiW",
+                      "x": 7,
+                      "y": 7,
+                      "name": "Card Back Inner Border",
+                      "fill": "#10243D",
+                      "width": 62,
+                      "height": 94,
+                      "stroke": "#6D94B2",
+                      "strokeWidth": 1
+                    },
+                    {
+                      "type": "text",
+                      "id": "QM7Lv",
+                      "x": 21,
+                      "y": 31,
+                      "name": "Card Back Spade",
+                      "fill": "$gold",
+                      "content": "♠",
+                      "fontFamily": "$font-body",
+                      "fontSize": 36,
+                      "fontWeight": "700"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "f78c5",
+              "name": "Chip Example",
+              "layout": "vertical",
+              "gap": 8,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "t3GnzV",
+                  "name": "Chip Caption",
+                  "fill": "$text-muted",
+                  "content": "Chip",
+                  "fontFamily": "$font-caption",
+                  "fontSize": 11,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "frame",
+                  "id": "teBjU",
+                  "name": "Chip",
+                  "reusable": true,
+                  "width": 54,
+                  "height": 54,
+                  "fill": "#E8B342",
+                  "cornerRadius": 27,
+                  "stroke": "#FFF3C2",
+                  "strokeWidth": 3,
+                  "effect": {
+                    "type": "shadow",
+                    "shadowType": "outer",
+                    "color": "#00000066",
+                    "offset": {
+                      "x": 0,
+                      "y": 4
+                    },
+                    "blur": 8
+                  },
+                  "layout": "vertical",
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "BGFQY",
+                      "name": "Chip Value",
+                      "fill": "#182C47",
+                      "content": "40",
+                      "fontFamily": "$font-caption",
+                      "fontSize": 13,
+                      "fontWeight": "700"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "brO0u",
+              "name": "Component Legend",
+              "width": "fill_container",
+              "fill": "#0E2037",
+              "cornerRadius": 12,
+              "stroke": "#2A4865",
+              "strokeWidth": 1,
+              "layout": "vertical",
+              "gap": 8,
+              "padding": [
+                18,
+                22
+              ],
+              "children": [
+                {
+                  "type": "text",
+                  "id": "D4Zb5",
+                  "name": "Component Legend Title",
+                  "fill": "$text-primary",
+                  "content": "组件策略",
+                  "fontFamily": "$font-heading",
+                  "fontSize": 16,
+                  "fontWeight": "650"
+                },
+                {
+                  "type": "text",
+                  "id": "P2zt4P",
+                  "name": "Component Legend Body",
+                  "fill": "$text-muted",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "牌面与筹码通过 descendant 覆盖点数、花色、金额；座位与按钮以语义变体保持状态清晰。",
+                  "lineHeight": 1.45,
+                  "fontFamily": "$font-body",
+                  "fontSize": 13,
+                  "fontWeight": "normal"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "IxXuE",
+          "name": "Seat Showcase",
+          "width": "fill_container",
+          "height": 98,
+          "gap": 28,
+          "alignItems": "end",
+          "children": [
+            {
+              "type": "frame",
+              "id": "xOWGA",
+              "name": "AI Seat Example",
+              "layout": "vertical",
+              "gap": 8,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "zzSrr",
+                  "name": "AI Seat Caption",
+                  "fill": "$text-muted",
+                  "content": "Seat / AI",
+                  "fontFamily": "$font-caption",
+                  "fontSize": 11,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "frame",
+                  "id": "JkKYy",
+                  "name": "Seat / AI",
+                  "reusable": true,
+                  "width": 238,
+                  "height": 76,
+                  "fill": "#112943",
+                  "cornerRadius": 16,
+                  "stroke": "#42627D",
+                  "strokeWidth": 1,
+                  "effect": {
+                    "type": "shadow",
+                    "shadowType": "outer",
+                    "color": "#00000055",
+                    "offset": {
+                      "x": 0,
+                      "y": 5
+                    },
+                    "blur": 10
+                  },
+                  "layout": "none",
+                  "children": [
+                    {
+                      "type": "ellipse",
+                      "id": "XPgdL",
+                      "x": 12,
+                      "y": 13,
+                      "name": "AI Avatar",
+                      "fill": "#234B66",
+                      "width": 42,
+                      "height": 42,
+                      "stroke": "#6D94B2",
+                      "strokeWidth": 1
+                    },
+                    {
+                      "type": "text",
+                      "id": "Pp34G",
+                      "x": 23,
+                      "y": 24,
+                      "name": "AI Initials",
+                      "fill": "$text-primary",
+                      "content": "AI",
+                      "fontFamily": "$font-caption",
+                      "fontSize": 12,
+                      "fontWeight": "700"
+                    },
+                    {
+                      "type": "text",
+                      "id": "FF1Kv",
+                      "x": 66,
+                      "y": 10,
+                      "name": "AI Name",
+                      "fill": "$text-primary",
+                      "content": "河豚",
+                      "fontFamily": "$font-body",
+                      "fontSize": 14,
+                      "fontWeight": "650"
+                    },
+                    {
+                      "type": "text",
+                      "id": "p5lWn4",
+                      "x": 66,
+                      "y": 31,
+                      "name": "AI Chips",
+                      "fill": "$gold",
+                      "content": "2,840",
+                      "fontFamily": "$font-caption",
+                      "fontSize": 12,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "text",
+                      "id": "P9qEJi",
+                      "x": 66,
+                      "y": 51,
+                      "name": "AI Action",
+                      "fill": "$text-muted",
+                      "content": "思考中…",
+                      "fontFamily": "$font-body",
+                      "fontSize": 11,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "U9iQH",
+                      "x": 198,
+                      "y": 10,
+                      "name": "AI Marker",
+                      "width": 28,
+                      "height": 28,
+                      "fill": "$gold",
+                      "cornerRadius": 14,
+                      "layout": "vertical",
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "zcaap",
+                          "name": "AI Marker Text",
+                          "fill": "#182C47",
+                          "content": "D",
+                          "fontFamily": "$font-caption",
+                          "fontSize": 11,
+                          "fontWeight": "800"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "gSoQZ",
+              "name": "Player Seat Example",
+              "layout": "vertical",
+              "gap": 8,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "Hucs3",
+                  "name": "Player Seat Caption",
+                  "fill": "$text-muted",
+                  "content": "Seat / Player",
+                  "fontFamily": "$font-caption",
+                  "fontSize": 11,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "frame",
+                  "id": "U3dQs",
+                  "name": "Seat / Player",
+                  "reusable": true,
+                  "width": 252,
+                  "height": 76,
+                  "fill": "#122B45",
+                  "cornerRadius": 16,
+                  "stroke": "$gold",
+                  "strokeWidth": 2,
+                  "effect": [
+                    {
+                      "type": "shadow",
+                      "shadowType": "outer",
+                      "color": "#F5C05155",
+                      "blur": 16,
+                      "spread": 2
+                    },
+                    {
+                      "type": "shadow",
+                      "shadowType": "outer",
+                      "color": "#00000066",
+                      "offset": {
+                        "x": 0,
+                        "y": 6
+                      },
+                      "blur": 12
+                    }
+                  ],
+                  "layout": "none",
+                  "children": [
+                    {
+                      "type": "ellipse",
+                      "id": "jcOIT",
+                      "x": 12,
+                      "y": 13,
+                      "name": "Player Avatar",
+                      "fill": "#3A654F",
+                      "width": 42,
+                      "height": 42,
+                      "stroke": "$gold",
+                      "strokeWidth": 1
+                    },
+                    {
+                      "type": "text",
+                      "id": "gt0aq",
+                      "x": 24,
+                      "y": 24,
+                      "name": "Player Initials",
+                      "fill": "$text-primary",
+                      "content": "你",
+                      "fontFamily": "$font-body",
+                      "fontSize": 13,
+                      "fontWeight": "700"
+                    },
+                    {
+                      "type": "text",
+                      "id": "Gu47b",
+                      "x": 66,
+                      "y": 10,
+                      "name": "Player Name",
+                      "fill": "$text-primary",
+                      "content": "你 · VIP",
+                      "fontFamily": "$font-body",
+                      "fontSize": 14,
+                      "fontWeight": "700"
+                    },
+                    {
+                      "type": "text",
+                      "id": "rd1eC",
+                      "x": 66,
+                      "y": 31,
+                      "name": "Player Chips",
+                      "fill": "$gold",
+                      "content": "5,000",
+                      "fontFamily": "$font-caption",
+                      "fontSize": 12,
+                      "fontWeight": "700"
+                    },
+                    {
+                      "type": "text",
+                      "id": "JpRvm",
+                      "x": 66,
+                      "y": 51,
+                      "name": "Player Action",
+                      "fill": "#9FE4C7",
+                      "content": "等待操作",
+                      "fontFamily": "$font-body",
+                      "fontSize": 11,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "AUO9I",
+                      "x": 212,
+                      "y": 10,
+                      "name": "Player Marker",
+                      "width": 28,
+                      "height": 28,
+                      "fill": "#C94545",
+                      "cornerRadius": 14,
+                      "layout": "vertical",
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "kpg2a",
+                          "name": "Player Marker Text",
+                          "fill": "#FFFFFF",
+                          "content": "BB",
+                          "fontFamily": "$font-caption",
+                          "fontSize": 9,
+                          "fontWeight": "800"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "gWTT5",
+              "name": "Seat State Legend",
+              "width": "fill_container",
+              "fill": "#0E2037",
+              "cornerRadius": 12,
+              "layout": "vertical",
+              "gap": 7,
+              "padding": [
+                12,
+                18
+              ],
+              "children": [
+                {
+                  "type": "text",
+                  "id": "HSX7x",
+                  "name": "Seat State Legend Title",
+                  "fill": "$text-primary",
+                  "content": "行动状态：等待 / 思考 / 跟注 / 弃牌",
+                  "fontFamily": "$font-body",
+                  "fontSize": 13,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "dtk4u",
+                  "name": "Seat State Legend Body",
+                  "fill": "$text-muted",
+                  "content": "D、SB、BB 作为可覆盖标识；玩家版本使用金色描边。",
+                  "fontFamily": "$font-body",
+                  "fontSize": 12,
+                  "fontWeight": "normal"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "uLRe3",
+          "name": "Top Status Bar",
+          "reusable": true,
+          "width": "fill_container",
+          "height": 64,
+          "fill": "$top-bar",
+          "cornerRadius": 18,
+          "stroke": "#35516D",
+          "strokeWidth": 1,
+          "effect": {
+            "type": "shadow",
+            "shadowType": "outer",
+            "color": "#00000055",
+            "offset": {
+              "x": 0,
+              "y": 6
+            },
+            "blur": 16
+          },
+          "padding": [
+            0,
+            24
+          ],
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "Q10se",
+              "name": "Status Brand",
+              "fill": "$gold",
+              "content": "POKER CLUB",
+              "fontFamily": "$font-heading",
+              "fontSize": 18,
+              "fontWeight": "750",
+              "letterSpacing": 1.4
+            },
+            {
+              "type": "text",
+              "id": "lPT9o",
+              "name": "Status Stage",
+              "fill": "$text-primary",
+              "content": "盲注 20 / 40 · 翻牌前",
+              "fontFamily": "$font-body",
+              "fontSize": 14,
+              "fontWeight": "600"
+            },
+            {
+              "type": "text",
+              "id": "NNHHz",
+              "name": "Status Table",
+              "fill": "$text-muted",
+              "content": "六人现金桌",
+              "fontFamily": "$font-caption",
+              "fontSize": 12,
+              "fontWeight": "600"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "QJx1t",
+          "name": "Action Buttons Showcase",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 8,
+          "children": [
+            {
+              "type": "text",
+              "id": "IckJL",
+              "name": "Action Buttons Caption",
+              "fill": "$text-muted",
+              "content": "Action Button / 四种视觉变体",
+              "fontFamily": "$font-caption",
+              "fontSize": 11,
+              "fontWeight": "600"
+            },
+            {
+              "type": "frame",
+              "id": "oHN4q",
+              "name": "Action Buttons Row",
+              "width": "fill_container",
+              "gap": 16,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "Z4nWp",
+                  "name": "Action Button / Fold",
+                  "reusable": true,
+                  "width": 292,
+                  "height": 52,
+                  "fill": "#C94545",
+                  "cornerRadius": 11,
+                  "stroke": "#FFFFFF24",
+                  "strokeWidth": 1,
+                  "effect": {
+                    "type": "shadow",
+                    "shadowType": "outer",
+                    "color": "#00000044",
+                    "offset": {
+                      "x": 0,
+                      "y": 5
+                    },
+                    "blur": 10
+                  },
+                  "layout": "vertical",
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "vpKUB",
+                      "name": "Action Label",
+                      "fill": "#FFFFFF",
+                      "content": "弃牌",
+                      "fontFamily": "$font-body",
+                      "fontSize": 15,
+                      "fontWeight": "700"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "LDbN1",
+                  "name": "Action Button / Call",
+                  "reusable": true,
+                  "width": 292,
+                  "height": 52,
+                  "fill": "#2879C9",
+                  "cornerRadius": 11,
+                  "stroke": "#FFFFFF24",
+                  "strokeWidth": 1,
+                  "effect": {
+                    "type": "shadow",
+                    "shadowType": "outer",
+                    "color": "#00000044",
+                    "offset": {
+                      "x": 0,
+                      "y": 5
+                    },
+                    "blur": 10
+                  },
+                  "layout": "vertical",
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "NsKYZ",
+                      "name": "Action Label",
+                      "fill": "#FFFFFF",
+                      "content": "跟注 40",
+                      "fontFamily": "$font-body",
+                      "fontSize": 15,
+                      "fontWeight": "700"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "amj8F",
+                  "name": "Action Button / Raise",
+                  "reusable": true,
+                  "width": 292,
+                  "height": 52,
+                  "fill": "#239965",
+                  "cornerRadius": 11,
+                  "stroke": "#FFFFFF24",
+                  "strokeWidth": 1,
+                  "effect": {
+                    "type": "shadow",
+                    "shadowType": "outer",
+                    "color": "#00000044",
+                    "offset": {
+                      "x": 0,
+                      "y": 5
+                    },
+                    "blur": 10
+                  },
+                  "layout": "vertical",
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "jVt4K",
+                      "name": "Action Label",
+                      "fill": "#FFFFFF",
+                      "content": "自定义加注",
+                      "fontFamily": "$font-body",
+                      "fontSize": 15,
+                      "fontWeight": "700"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "o0BVMN",
+                  "name": "Action Button / All In",
+                  "reusable": true,
+                  "width": 292,
+                  "height": 52,
+                  "fill": "#F5C051",
+                  "cornerRadius": 11,
+                  "stroke": "#FFFFFF24",
+                  "strokeWidth": 1,
+                  "effect": {
+                    "type": "shadow",
+                    "shadowType": "outer",
+                    "color": "#00000044",
+                    "offset": {
+                      "x": 0,
+                      "y": 5
+                    },
+                    "blur": 10
+                  },
+                  "layout": "vertical",
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "W6bfF",
+                      "name": "Action Label",
+                      "fill": "#182C47",
+                      "content": "全压",
+                      "fontFamily": "$font-body",
+                      "fontSize": 15,
+                      "fontWeight": "700"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "nzC34",
+      "x": 880,
+      "y": 1270,
+      "name": "Screens",
+      "width": 4000,
+      "height": 850,
+      "fill": "#050D19",
+      "cornerRadius": 18,
+      "stroke": "#20364F",
+      "strokeWidth": 1,
+      "layout": "vertical",
+      "gap": 16,
+      "padding": [
+        20,
+        32,
+        30,
+        32
+      ],
+      "children": [
+        {
+          "type": "text",
+          "id": "eAx2p",
+          "name": "Screens Title",
+          "fill": "$text-primary",
+          "content": "SCREENS / 横屏牌局状态",
+          "fontFamily": "$font-heading",
+          "fontSize": 24,
+          "fontWeight": "700",
+          "letterSpacing": 1
+        },
+        {
+          "type": "frame",
+          "id": "LyN5Y",
+          "name": "Screens Row",
+          "width": "fill_container",
+          "height": 720,
+          "gap": 40,
+          "children": [
+            {
+              "type": "frame",
+              "id": "R8GK9v",
+              "name": "01 Main Table",
+              "clip": true,
+              "width": 1280,
+              "height": 720,
+              "fill": "$bg-deep",
+              "layout": "none",
+              "children": [
+                {
+                  "type": "rectangle",
+                  "cornerRadius": 160,
+                  "id": "dMNYe",
+                  "x": 0,
+                  "y": 160,
+                  "name": "Main Ambient Left",
+                  "fill": {
+                    "type": "gradient",
+                    "gradientType": "radial",
+                    "enabled": true,
+                    "opacity": 0.22,
+                    "rotation": 0,
+                    "size": {
+                      "width": 1,
+                      "height": 1
+                    },
+                    "colors": [
+                      {
+                        "color": "#217E5E",
+                        "position": 0
+                      },
+                      {
+                        "color": "#0B162B00",
+                        "position": 1
+                      }
+                    ]
+                  },
+                  "width": 340,
+                  "height": 260
+                },
+                {
+                  "type": "rectangle",
+                  "cornerRadius": 160,
+                  "id": "TD4aq",
+                  "x": 940,
+                  "y": 120,
+                  "name": "Main Ambient Right",
+                  "fill": {
+                    "type": "gradient",
+                    "gradientType": "radial",
+                    "enabled": true,
+                    "opacity": 0.18,
+                    "rotation": 0,
+                    "size": {
+                      "width": 1,
+                      "height": 1
+                    },
+                    "colors": [
+                      {
+                        "color": "#F5C051",
+                        "position": 0
+                      },
+                      {
+                        "color": "#0B162B00",
+                        "position": 1
+                      }
+                    ]
+                  },
+                  "width": 340,
+                  "height": 280
+                },
+                {
+                  "id": "e3uYdJ",
+                  "type": "ref",
+                  "ref": "uLRe3",
+                  "name": "Main Top Status Bar",
+                  "x": 24,
+                  "y": 16,
+                  "width": 1232,
+                  "height": 64
+                },
+                {
+                  "type": "ellipse",
+                  "id": "Mrbg9",
+                  "x": 138,
+                  "y": 104,
+                  "name": "Table Outer Ring",
+                  "fill": "#102D36",
+                  "width": 1004,
+                  "height": 438,
+                  "stroke": "$gold",
+                  "strokeWidth": 3,
+                  "effect": {
+                    "type": "shadow",
+                    "shadowType": "outer",
+                    "color": "#00000088",
+                    "offset": {
+                      "x": 0,
+                      "y": 12
+                    },
+                    "blur": 26
+                  }
+                },
+                {
+                  "type": "ellipse",
+                  "id": "JOhYD",
+                  "x": 160,
+                  "y": 126,
+                  "name": "Table Inner Ring",
+                  "fill": "$table-felt",
+                  "width": 960,
+                  "height": 394,
+                  "stroke": "#66BD98",
+                  "strokeWidth": 3,
+                  "effect": {
+                    "type": "shadow",
+                    "shadowType": "outer",
+                    "color": "#08251E88",
+                    "offset": {
+                      "x": 0,
+                      "y": 4
+                    },
+                    "blur": 18
+                  }
+                },
+                {
+                  "type": "ellipse",
+                  "id": "cbfot",
+                  "x": 390,
+                  "y": 198,
+                  "name": "Table Center Mark",
+                  "fill": "#176C50",
+                  "width": 500,
+                  "height": 250,
+                  "stroke": "#74CBA7AA",
+                  "strokeWidth": 1
+                },
+                {
+                  "type": "text",
+                  "id": "EtDx0",
+                  "x": 530,
+                  "y": 230,
+                  "name": "Table Watermark",
+                  "fill": "#F0F9FF26",
+                  "content": "POKER CLUB",
+                  "fontFamily": "$font-heading",
+                  "fontSize": 20,
+                  "fontWeight": "750",
+                  "letterSpacing": 4
+                },
+                {
+                  "type": "frame",
+                  "id": "reAPo",
+                  "x": 568,
+                  "y": 266,
+                  "name": "Pot 100",
+                  "width": 144,
+                  "height": 42,
+                  "fill": "#0D2B35CC",
+                  "cornerRadius": 18,
+                  "stroke": "$gold",
+                  "strokeWidth": 1,
+                  "gap": 8,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "id": "FSfnb",
+                      "type": "ref",
+                      "ref": "teBjU",
+                      "name": "Pot Chip",
+                      "width": 28,
+                      "height": 28,
+                      "descendants": {
+                        "BGFQY": {
+                          "content": ""
+                        }
+                      }
+                    },
+                    {
+                      "type": "text",
+                      "id": "z86df",
+                      "name": "Pot Label",
+                      "fill": "$text-primary",
+                      "content": "底池 100",
+                      "fontFamily": "$font-body",
+                      "fontSize": 14,
+                      "fontWeight": "700"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "eDyaR",
+                  "x": 429,
+                  "y": 320,
+                  "name": "Community Card Slots",
+                  "width": 422,
+                  "height": 96,
+                  "gap": 10,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "k9w4Eo",
+                      "name": "Community Slot 1",
+                      "width": 76,
+                      "height": 96,
+                      "fill": "#113849AA",
+                      "cornerRadius": 8,
+                      "stroke": "#D8F4E45E",
+                      "strokeWidth": 1
+                    },
+                    {
+                      "type": "frame",
+                      "id": "v58rwm",
+                      "name": "Community Slot 2",
+                      "width": 76,
+                      "height": 96,
+                      "fill": "#113849AA",
+                      "cornerRadius": 8,
+                      "stroke": "#D8F4E45E",
+                      "strokeWidth": 1
+                    },
+                    {
+                      "type": "frame",
+                      "id": "fid2s",
+                      "name": "Community Slot 3",
+                      "width": 76,
+                      "height": 96,
+                      "fill": "#113849AA",
+                      "cornerRadius": 8,
+                      "stroke": "#D8F4E45E",
+                      "strokeWidth": 1
+                    },
+                    {
+                      "type": "frame",
+                      "id": "cObTv",
+                      "name": "Community Slot 4",
+                      "width": 76,
+                      "height": 96,
+                      "fill": "#113849AA",
+                      "cornerRadius": 8,
+                      "stroke": "#D8F4E45E",
+                      "strokeWidth": 1
+                    },
+                    {
+                      "type": "frame",
+                      "id": "VUFFH",
+                      "name": "Community Slot 5",
+                      "width": 76,
+                      "height": 96,
+                      "fill": "#113849AA",
+                      "cornerRadius": 8,
+                      "stroke": "#D8F4E45E",
+                      "strokeWidth": 1
+                    }
+                  ]
+                },
+                {
+                  "id": "WjFvX",
+                  "type": "ref",
+                  "ref": "JkKYy",
+                  "name": "AI Seat 1",
+                  "x": 170,
+                  "y": 108,
+                  "width": 238,
+                  "height": 76,
+                  "descendants": {
+                    "FF1Kv": {
+                      "content": "Luna"
+                    },
+                    "p5lWn4": {
+                      "content": "3,240"
+                    },
+                    "P9qEJi": {
+                      "content": "已跟注 40",
+                      "fill": "$text-muted"
+                    },
+                    "U9iQH": {
+                      "enabled": true
+                    },
+                    "zcaap": {
+                      "content": "D"
+                    }
+                  }
+                },
+                {
+                  "id": "m50OY",
+                  "type": "ref",
+                  "ref": "JkKYy",
+                  "name": "AI Seat 2",
+                  "x": 521,
+                  "y": 88,
+                  "width": 238,
+                  "height": 76,
+                  "descendants": {
+                    "FF1Kv": {
+                      "content": "山雀"
+                    },
+                    "p5lWn4": {
+                      "content": "4,160"
+                    },
+                    "P9qEJi": {
+                      "content": "等待",
+                      "fill": "$text-muted"
+                    },
+                    "U9iQH": {
+                      "enabled": true
+                    },
+                    "zcaap": {
+                      "content": "SB"
+                    }
+                  }
+                },
+                {
+                  "id": "a5v2ef",
+                  "type": "ref",
+                  "ref": "JkKYy",
+                  "name": "AI Seat 3",
+                  "x": 872,
+                  "y": 108,
+                  "width": 238,
+                  "height": 76,
+                  "descendants": {
+                    "FF1Kv": {
+                      "content": "Marco"
+                    },
+                    "p5lWn4": {
+                      "content": "2,620"
+                    },
+                    "P9qEJi": {
+                      "content": "已下注 40",
+                      "fill": "$text-muted"
+                    },
+                    "U9iQH": {
+                      "enabled": false
+                    },
+                    "zcaap": {
+                      "content": ""
+                    }
+                  }
+                },
+                {
+                  "id": "aX6Ll",
+                  "type": "ref",
+                  "ref": "JkKYy",
+                  "name": "AI Seat 4",
+                  "x": 72,
+                  "y": 350,
+                  "width": 238,
+                  "height": 76,
+                  "descendants": {
+                    "FF1Kv": {
+                      "content": "夜航"
+                    },
+                    "p5lWn4": {
+                      "content": "5,040"
+                    },
+                    "P9qEJi": {
+                      "content": "弃牌",
+                      "fill": "#6F8497"
+                    },
+                    "U9iQH": {
+                      "enabled": false
+                    },
+                    "zcaap": {
+                      "content": ""
+                    }
+                  }
+                },
+                {
+                  "id": "AxZ7T",
+                  "type": "ref",
+                  "ref": "JkKYy",
+                  "name": "AI Seat 5",
+                  "x": 970,
+                  "y": 350,
+                  "width": 238,
+                  "height": 76,
+                  "descendants": {
+                    "FF1Kv": {
+                      "content": "Nova"
+                    },
+                    "p5lWn4": {
+                      "content": "3,880"
+                    },
+                    "P9qEJi": {
+                      "content": "思考中…",
+                      "fill": "$text-muted"
+                    },
+                    "U9iQH": {
+                      "enabled": false
+                    },
+                    "zcaap": {
+                      "content": ""
+                    }
+                  }
+                },
+                {
+                  "type": "frame",
+                  "id": "OYeI2",
+                  "x": 267,
+                  "y": 187,
+                  "name": "AI Hole Cards",
+                  "reusable": true,
+                  "width": 64,
+                  "height": 50,
+                  "layout": "none",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "VPiw8",
+                      "x": 0,
+                      "y": 2,
+                      "name": "Mini Back 1",
+                      "width": 38,
+                      "height": 50,
+                      "fill": "#102B49",
+                      "cornerRadius": 6,
+                      "stroke": "#6B93B0",
+                      "strokeWidth": 1,
+                      "effect": {
+                        "type": "shadow",
+                        "shadowType": "outer",
+                        "color": "#00000066",
+                        "offset": {
+                          "x": 0,
+                          "y": 3
+                        },
+                        "blur": 6
+                      },
+                      "layout": "vertical",
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "ACUVh",
+                          "name": "Mini Back Spade 1",
+                          "fill": "$gold",
+                          "content": "♠",
+                          "fontFamily": "$font-body",
+                          "fontSize": 18,
+                          "fontWeight": "700"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "Ofoju",
+                      "x": 24,
+                      "y": 0,
+                      "name": "Mini Back 2",
+                      "width": 38,
+                      "height": 50,
+                      "fill": "#102B49",
+                      "cornerRadius": 6,
+                      "stroke": "#6B93B0",
+                      "strokeWidth": 1,
+                      "effect": {
+                        "type": "shadow",
+                        "shadowType": "outer",
+                        "color": "#00000066",
+                        "offset": {
+                          "x": 0,
+                          "y": 3
+                        },
+                        "blur": 6
+                      },
+                      "layout": "vertical",
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "AE8sO",
+                          "name": "Mini Back Spade 2",
+                          "fill": "$gold",
+                          "content": "♠",
+                          "fontFamily": "$font-body",
+                          "fontSize": 18,
+                          "fontWeight": "700"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "id": "Y9xupE",
+                  "type": "ref",
+                  "ref": "OYeI2",
+                  "name": "AI Hole Cards 2",
+                  "x": 607,
+                  "y": 166,
+                  "width": 64,
+                  "height": 50
+                },
+                {
+                  "id": "F3DpQ",
+                  "type": "ref",
+                  "ref": "OYeI2",
+                  "name": "AI Hole Cards 3",
+                  "x": 953,
+                  "y": 187,
+                  "width": 64,
+                  "height": 50
+                },
+                {
+                  "id": "R7jGQ",
+                  "type": "ref",
+                  "ref": "OYeI2",
+                  "name": "AI Hole Cards 4",
+                  "x": 224,
+                  "y": 380,
+                  "width": 64,
+                  "height": 50
+                },
+                {
+                  "id": "SAJdg",
+                  "type": "ref",
+                  "ref": "OYeI2",
+                  "name": "AI Hole Cards 5",
+                  "x": 992,
+                  "y": 380,
+                  "width": 64,
+                  "height": 50
+                },
+                {
+                  "id": "H0BRT",
+                  "type": "ref",
+                  "ref": "U3dQs",
+                  "name": "Main Player Seat",
+                  "x": 514,
+                  "y": 524,
+                  "width": 252,
+                  "height": 76,
+                  "descendants": {
+                    "rd1eC": {
+                      "content": "5,000"
+                    },
+                    "JpRvm": {
+                      "content": "轮到你",
+                      "fill": "#9FE4C7"
+                    },
+                    "kpg2a": {
+                      "content": "BB"
+                    }
+                  }
+                },
+                {
+                  "id": "j2E7PG",
+                  "type": "ref",
+                  "ref": "p51HtV",
+                  "name": "Player Card K Diamond",
+                  "x": 562,
+                  "y": 412,
+                  "width": 76,
+                  "height": 108
+                },
+                {
+                  "id": "Tudag",
+                  "type": "ref",
+                  "ref": "p51HtV",
+                  "name": "Player Card 9 Spade",
+                  "x": 642,
+                  "y": 412,
+                  "width": 76,
+                  "height": 108,
+                  "descendants": {
+                    "P4P8R": {
+                      "content": "9",
+                      "fill": "#172033"
+                    },
+                    "WcOQw": {
+                      "content": "♠",
+                      "fill": "#172033"
+                    },
+                    "cCzh7": {
+                      "content": "♠",
+                      "fill": "#172033"
+                    }
+                  }
+                },
+                {
+                  "type": "frame",
+                  "id": "cxwxZ",
+                  "x": 24,
+                  "y": 594,
+                  "name": "Motion Notes",
+                  "width": 430,
+                  "height": 42,
+                  "layout": "vertical",
+                  "gap": 3,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "hwrpr",
+                      "name": "Motion Note Line 1",
+                      "fill": "$text-muted",
+                      "content": "动效 · 发牌 160ms · AI 思考 550–900ms",
+                      "fontFamily": "$font-caption",
+                      "fontSize": 10,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "text",
+                      "id": "JYPvh",
+                      "name": "Motion Note Line 2",
+                      "fill": "#7FA59A",
+                      "content": "筹码入池 · 公共牌分批翻开",
+                      "fontFamily": "$font-body",
+                      "fontSize": 11,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "YBi7l",
+                  "x": 24,
+                  "y": 648,
+                  "name": "Bottom Action Bar",
+                  "width": 1232,
+                  "height": 60,
+                  "fill": "#071121DD",
+                  "cornerRadius": 18,
+                  "stroke": "#29435E",
+                  "strokeWidth": 1,
+                  "gap": 12,
+                  "padding": 4,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "id": "s2PkY",
+                      "type": "ref",
+                      "ref": "Z4nWp",
+                      "name": "Fold Action",
+                      "width": 292,
+                      "height": 52
+                    },
+                    {
+                      "id": "Cunty",
+                      "type": "ref",
+                      "ref": "LDbN1",
+                      "name": "Call Action",
+                      "width": 292,
+                      "height": 52
+                    },
+                    {
+                      "id": "U0fSsx",
+                      "type": "ref",
+                      "ref": "amj8F",
+                      "name": "Raise Action",
+                      "width": 292,
+                      "height": 52
+                    },
+                    {
+                      "id": "MryyN",
+                      "type": "ref",
+                      "ref": "o0BVMN",
+                      "name": "All In Action",
+                      "width": 292,
+                      "height": 52
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "pKckQ",
+              "name": "02 Custom Raise",
+              "clip": true,
+              "width": 1280,
+              "height": 720,
+              "fill": "$bg-deep",
+              "layout": "none",
+              "children": [
+                {
+                  "type": "rectangle",
+                  "cornerRadius": 160,
+                  "id": "lHZcY",
+                  "x": 0,
+                  "y": 160,
+                  "name": "Main Ambient Left",
+                  "fill": {
+                    "type": "gradient",
+                    "gradientType": "radial",
+                    "enabled": true,
+                    "opacity": 0.22,
+                    "rotation": 0,
+                    "size": {
+                      "width": 1,
+                      "height": 1
+                    },
+                    "colors": [
+                      {
+                        "color": "#217E5E",
+                        "position": 0
+                      },
+                      {
+                        "color": "#0B162B00",
+                        "position": 1
+                      }
+                    ]
+                  },
+                  "width": 340,
+                  "height": 260
+                },
+                {
+                  "type": "rectangle",
+                  "cornerRadius": 160,
+                  "id": "xtFOQ",
+                  "x": 940,
+                  "y": 120,
+                  "name": "Main Ambient Right",
+                  "fill": {
+                    "type": "gradient",
+                    "gradientType": "radial",
+                    "enabled": true,
+                    "opacity": 0.18,
+                    "rotation": 0,
+                    "size": {
+                      "width": 1,
+                      "height": 1
+                    },
+                    "colors": [
+                      {
+                        "color": "#F5C051",
+                        "position": 0
+                      },
+                      {
+                        "color": "#0B162B00",
+                        "position": 1
+                      }
+                    ]
+                  },
+                  "width": 340,
+                  "height": 280
+                },
+                {
+                  "id": "p1Uus",
+                  "type": "ref",
+                  "ref": "uLRe3",
+                  "name": "Main Top Status Bar",
+                  "x": 24,
+                  "y": 16,
+                  "width": 1232,
+                  "height": 64
+                },
+                {
+                  "type": "ellipse",
+                  "id": "X5NSsl",
+                  "x": 138,
+                  "y": 104,
+                  "name": "Table Outer Ring",
+                  "fill": "#102D36",
+                  "width": 1004,
+                  "height": 438,
+                  "stroke": "$gold",
+                  "strokeWidth": 3,
+                  "effect": {
+                    "type": "shadow",
+                    "shadowType": "outer",
+                    "color": "#00000088",
+                    "offset": {
+                      "x": 0,
+                      "y": 12
+                    },
+                    "blur": 26
+                  }
+                },
+                {
+                  "type": "ellipse",
+                  "id": "yYc7C",
+                  "x": 160,
+                  "y": 126,
+                  "name": "Table Inner Ring",
+                  "fill": "$table-felt",
+                  "width": 960,
+                  "height": 394,
+                  "stroke": "#66BD98",
+                  "strokeWidth": 3,
+                  "effect": {
+                    "type": "shadow",
+                    "shadowType": "outer",
+                    "color": "#08251E88",
+                    "offset": {
+                      "x": 0,
+                      "y": 4
+                    },
+                    "blur": 18
+                  }
+                },
+                {
+                  "type": "ellipse",
+                  "id": "u27y4",
+                  "x": 390,
+                  "y": 198,
+                  "name": "Table Center Mark",
+                  "fill": "#176C50",
+                  "width": 500,
+                  "height": 250,
+                  "stroke": "#74CBA7AA",
+                  "strokeWidth": 1
+                },
+                {
+                  "type": "text",
+                  "id": "IoYDe",
+                  "x": 530,
+                  "y": 230,
+                  "name": "Table Watermark",
+                  "fill": "#F0F9FF26",
+                  "content": "POKER CLUB",
+                  "fontFamily": "$font-heading",
+                  "fontSize": 20,
+                  "fontWeight": "750",
+                  "letterSpacing": 4
+                },
+                {
+                  "type": "frame",
+                  "id": "X4maC",
+                  "x": 568,
+                  "y": 266,
+                  "name": "Pot 100",
+                  "width": 144,
+                  "height": 42,
+                  "fill": "#0D2B35CC",
+                  "cornerRadius": 18,
+                  "stroke": "$gold",
+                  "strokeWidth": 1,
+                  "gap": 8,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "id": "A3fBB",
+                      "type": "ref",
+                      "ref": "teBjU",
+                      "name": "Pot Chip",
+                      "width": 28,
+                      "height": 28,
+                      "descendants": {
+                        "BGFQY": {
+                          "content": ""
+                        }
+                      }
+                    },
+                    {
+                      "type": "text",
+                      "id": "M8IeV",
+                      "name": "Pot Label",
+                      "fill": "$text-primary",
+                      "content": "底池 100",
+                      "fontFamily": "$font-body",
+                      "fontSize": 14,
+                      "fontWeight": "700"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "vkP5i",
+                  "x": 429,
+                  "y": 320,
+                  "name": "Community Card Slots",
+                  "width": 422,
+                  "height": 96,
+                  "gap": 10,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "mMvFr",
+                      "name": "Community Slot 1",
+                      "width": 76,
+                      "height": 96,
+                      "fill": "#113849AA",
+                      "cornerRadius": 8,
+                      "stroke": "#D8F4E45E",
+                      "strokeWidth": 1
+                    },
+                    {
+                      "type": "frame",
+                      "id": "Zt5W6",
+                      "name": "Community Slot 2",
+                      "width": 76,
+                      "height": 96,
+                      "fill": "#113849AA",
+                      "cornerRadius": 8,
+                      "stroke": "#D8F4E45E",
+                      "strokeWidth": 1
+                    },
+                    {
+                      "type": "frame",
+                      "id": "vngad",
+                      "name": "Community Slot 3",
+                      "width": 76,
+                      "height": 96,
+                      "fill": "#113849AA",
+                      "cornerRadius": 8,
+                      "stroke": "#D8F4E45E",
+                      "strokeWidth": 1
+                    },
+                    {
+                      "type": "frame",
+                      "id": "G7j1u",
+                      "name": "Community Slot 4",
+                      "width": 76,
+                      "height": 96,
+                      "fill": "#113849AA",
+                      "cornerRadius": 8,
+                      "stroke": "#D8F4E45E",
+                      "strokeWidth": 1
+                    },
+                    {
+                      "type": "frame",
+                      "id": "QTwXP",
+                      "name": "Community Slot 5",
+                      "width": 76,
+                      "height": 96,
+                      "fill": "#113849AA",
+                      "cornerRadius": 8,
+                      "stroke": "#D8F4E45E",
+                      "strokeWidth": 1
+                    }
+                  ]
+                },
+                {
+                  "id": "kueWu",
+                  "type": "ref",
+                  "ref": "JkKYy",
+                  "name": "AI Seat 1",
+                  "x": 170,
+                  "y": 108,
+                  "width": 238,
+                  "height": 76,
+                  "descendants": {
+                    "FF1Kv": {
+                      "content": "Luna"
+                    },
+                    "p5lWn4": {
+                      "content": "3,240"
+                    },
+                    "P9qEJi": {
+                      "content": "已跟注 40",
+                      "fill": "$text-muted"
+                    },
+                    "U9iQH": {
+                      "enabled": true
+                    },
+                    "zcaap": {
+                      "content": "D"
+                    }
+                  }
+                },
+                {
+                  "id": "Vk0NK",
+                  "type": "ref",
+                  "ref": "JkKYy",
+                  "name": "AI Seat 2",
+                  "x": 521,
+                  "y": 88,
+                  "width": 238,
+                  "height": 76,
+                  "descendants": {
+                    "FF1Kv": {
+                      "content": "山雀"
+                    },
+                    "p5lWn4": {
+                      "content": "4,160"
+                    },
+                    "P9qEJi": {
+                      "content": "等待",
+                      "fill": "$text-muted"
+                    },
+                    "U9iQH": {
+                      "enabled": true
+                    },
+                    "zcaap": {
+                      "content": "SB"
+                    }
+                  }
+                },
+                {
+                  "id": "kamhY",
+                  "type": "ref",
+                  "ref": "JkKYy",
+                  "name": "AI Seat 3",
+                  "x": 872,
+                  "y": 108,
+                  "width": 238,
+                  "height": 76,
+                  "descendants": {
+                    "FF1Kv": {
+                      "content": "Marco"
+                    },
+                    "p5lWn4": {
+                      "content": "2,620"
+                    },
+                    "P9qEJi": {
+                      "content": "已下注 40",
+                      "fill": "$text-muted"
+                    },
+                    "U9iQH": {
+                      "enabled": false
+                    },
+                    "zcaap": {
+                      "content": ""
+                    }
+                  }
+                },
+                {
+                  "id": "XFqTS",
+                  "type": "ref",
+                  "ref": "JkKYy",
+                  "name": "AI Seat 4",
+                  "x": 72,
+                  "y": 350,
+                  "width": 238,
+                  "height": 76,
+                  "descendants": {
+                    "FF1Kv": {
+                      "content": "夜航"
+                    },
+                    "p5lWn4": {
+                      "content": "5,040"
+                    },
+                    "P9qEJi": {
+                      "content": "弃牌",
+                      "fill": "#6F8497"
+                    },
+                    "U9iQH": {
+                      "enabled": false
+                    },
+                    "zcaap": {
+                      "content": ""
+                    }
+                  }
+                },
+                {
+                  "id": "JoJCL",
+                  "type": "ref",
+                  "ref": "JkKYy",
+                  "name": "AI Seat 5",
+                  "x": 970,
+                  "y": 350,
+                  "width": 238,
+                  "height": 76,
+                  "descendants": {
+                    "FF1Kv": {
+                      "content": "Nova"
+                    },
+                    "p5lWn4": {
+                      "content": "3,880"
+                    },
+                    "P9qEJi": {
+                      "content": "思考中…",
+                      "fill": "$text-muted"
+                    },
+                    "U9iQH": {
+                      "enabled": false
+                    },
+                    "zcaap": {
+                      "content": ""
+                    }
+                  }
+                },
+                {
+                  "id": "gD0d9",
+                  "type": "ref",
+                  "ref": "OYeI2"
+                },
+                {
+                  "id": "ous3b",
+                  "type": "ref",
+                  "ref": "OYeI2",
+                  "name": "AI Hole Cards 2",
+                  "x": 607,
+                  "y": 166,
+                  "width": 64,
+                  "height": 50
+                },
+                {
+                  "id": "zTsTj",
+                  "type": "ref",
+                  "ref": "OYeI2",
+                  "name": "AI Hole Cards 3",
+                  "x": 953,
+                  "y": 187,
+                  "width": 64,
+                  "height": 50
+                },
+                {
+                  "id": "vi170",
+                  "type": "ref",
+                  "ref": "OYeI2",
+                  "name": "AI Hole Cards 4",
+                  "x": 224,
+                  "y": 380,
+                  "width": 64,
+                  "height": 50
+                },
+                {
+                  "id": "mRXAX",
+                  "type": "ref",
+                  "ref": "OYeI2",
+                  "name": "AI Hole Cards 5",
+                  "x": 992,
+                  "y": 380,
+                  "width": 64,
+                  "height": 50
+                },
+                {
+                  "id": "HtMQJ",
+                  "type": "ref",
+                  "ref": "U3dQs",
+                  "name": "Main Player Seat",
+                  "x": 514,
+                  "y": 524,
+                  "width": 252,
+                  "height": 76,
+                  "descendants": {
+                    "rd1eC": {
+                      "content": "5,000"
+                    },
+                    "JpRvm": {
+                      "content": "轮到你",
+                      "fill": "#9FE4C7"
+                    },
+                    "kpg2a": {
+                      "content": "BB"
+                    }
+                  }
+                },
+                {
+                  "id": "DFO69",
+                  "type": "ref",
+                  "ref": "p51HtV",
+                  "name": "Player Card K Diamond",
+                  "x": 562,
+                  "y": 412,
+                  "width": 76,
+                  "height": 108
+                },
+                {
+                  "id": "U7FSRz",
+                  "type": "ref",
+                  "ref": "p51HtV",
+                  "name": "Player Card 9 Spade",
+                  "x": 642,
+                  "y": 412,
+                  "width": 76,
+                  "height": 108,
+                  "descendants": {
+                    "P4P8R": {
+                      "content": "9",
+                      "fill": "#172033"
+                    },
+                    "WcOQw": {
+                      "content": "♠",
+                      "fill": "#172033"
+                    },
+                    "cCzh7": {
+                      "content": "♠",
+                      "fill": "#172033"
+                    }
+                  }
+                },
+                {
+                  "type": "frame",
+                  "id": "wztWO",
+                  "x": 24,
+                  "y": 594,
+                  "name": "Motion Notes",
+                  "width": 430,
+                  "height": 42,
+                  "layout": "vertical",
+                  "gap": 3,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "rFAvM",
+                      "name": "Motion Note Line 1",
+                      "fill": "$text-muted",
+                      "content": "动效 · 发牌 160ms · AI 思考 550–900ms",
+                      "fontFamily": "$font-caption",
+                      "fontSize": 10,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "text",
+                      "id": "ePd2J",
+                      "name": "Motion Note Line 2",
+                      "fill": "#7FA59A",
+                      "content": "筹码入池 · 公共牌分批翻开",
+                      "fontFamily": "$font-body",
+                      "fontSize": 11,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "v5Ffb",
+                  "x": 24,
+                  "y": 648,
+                  "name": "Bottom Action Bar",
+                  "width": 1232,
+                  "height": 60,
+                  "fill": "#071121DD",
+                  "cornerRadius": 18,
+                  "stroke": "#29435E",
+                  "strokeWidth": 1,
+                  "gap": 12,
+                  "padding": 4,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "id": "m95m1",
+                      "type": "ref",
+                      "ref": "Z4nWp",
+                      "name": "Fold Action",
+                      "width": 292,
+                      "height": 52
+                    },
+                    {
+                      "id": "DOtPs",
+                      "type": "ref",
+                      "ref": "LDbN1",
+                      "name": "Call Action",
+                      "width": 292,
+                      "height": 52
+                    },
+                    {
+                      "id": "jE8EV",
+                      "type": "ref",
+                      "ref": "amj8F",
+                      "name": "Raise Action",
+                      "width": 292,
+                      "height": 52
+                    },
+                    {
+                      "id": "sRtCY",
+                      "type": "ref",
+                      "ref": "o0BVMN",
+                      "name": "All In Action",
+                      "width": 292,
+                      "height": 52
+                    }
+                  ]
+                },
+                {
+                  "type": "rectangle",
+                  "id": "qFIwY",
+                  "x": 0,
+                  "y": 0,
+                  "name": "Raise Modal Overlay",
+                  "fill": "#061326CC",
+                  "width": 1280,
+                  "height": 720
+                },
+                {
+                  "type": "frame",
+                  "id": "ufmCW",
+                  "x": 330,
+                  "y": 262,
+                  "name": "Custom Raise Modal",
+                  "width": 620,
+                  "height": 196,
+                  "fill": "$modal",
+                  "cornerRadius": 18,
+                  "stroke": "#54748F",
+                  "strokeWidth": 1,
+                  "effect": [
+                    {
+                      "type": "shadow",
+                      "shadowType": "outer",
+                      "color": "#00000099",
+                      "offset": {
+                        "x": 0,
+                        "y": 18
+                      },
+                      "blur": 36,
+                      "spread": 4
+                    },
+                    {
+                      "type": "shadow",
+                      "shadowType": "outer",
+                      "color": "#2879C944",
+                      "blur": 20
+                    }
+                  ],
+                  "layout": "none",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "l1Ibz",
+                      "x": 24,
+                      "y": 16,
+                      "name": "Raise Modal Title",
+                      "fill": "$text-primary",
+                      "content": "加注至 180",
+                      "fontFamily": "$font-heading",
+                      "fontSize": 20,
+                      "fontWeight": "750"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "ty1Td",
+                      "x": 24,
+                      "y": 50,
+                      "name": "Raise Amount Input",
+                      "width": 572,
+                      "height": 44,
+                      "fill": "#0B2035",
+                      "cornerRadius": 8,
+                      "stroke": "#4E7898",
+                      "strokeWidth": 1,
+                      "padding": [
+                        0,
+                        16
+                      ],
+                      "justifyContent": "space_between",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "xBFUD",
+                          "name": "Raise Input Label",
+                          "fill": "$text-muted",
+                          "content": "加注金额",
+                          "fontFamily": "$font-body",
+                          "fontSize": 12,
+                          "fontWeight": "600"
+                        },
+                        {
+                          "type": "text",
+                          "id": "Tyy2A",
+                          "name": "Raise Input Value",
+                          "fill": "$text-primary",
+                          "content": "180",
+                          "fontFamily": "$font-caption",
+                          "fontSize": 20,
+                          "fontWeight": "750"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "bR1hx",
+                      "x": 24,
+                      "y": 104,
+                      "name": "Raise Quick Amounts",
+                      "width": 572,
+                      "height": 34,
+                      "gap": 8,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "A8WdY9",
+                          "name": "Raise Quick −20",
+                          "width": 80,
+                          "height": 34,
+                          "fill": "#2879C9",
+                          "cornerRadius": 8,
+                          "stroke": "#FFFFFF20",
+                          "strokeWidth": 1,
+                          "layout": "vertical",
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "E2yNpK",
+                              "name": "Raise Quick −20 Label",
+                              "fill": "#FFFFFF",
+                              "content": "−20",
+                              "fontFamily": "$font-body",
+                              "fontSize": 12,
+                              "fontWeight": "700"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "AQ4AO",
+                          "name": "Raise Quick +20",
+                          "width": 80,
+                          "height": 34,
+                          "fill": "#2879C9",
+                          "cornerRadius": 8,
+                          "stroke": "#FFFFFF20",
+                          "strokeWidth": 1,
+                          "layout": "vertical",
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "pyV33",
+                              "name": "Raise Quick +20 Label",
+                              "fill": "#FFFFFF",
+                              "content": "+20",
+                              "fontFamily": "$font-body",
+                              "fontSize": 12,
+                              "fontWeight": "700"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "C9Z6E",
+                          "name": "Raise Quick 最小",
+                          "width": 90,
+                          "height": 34,
+                          "fill": "#239965",
+                          "cornerRadius": 8,
+                          "stroke": "#FFFFFF20",
+                          "strokeWidth": 1,
+                          "layout": "vertical",
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "a20kIP",
+                              "name": "Raise Quick 最小 Label",
+                              "fill": "#FFFFFF",
+                              "content": "最小",
+                              "fontFamily": "$font-body",
+                              "fontSize": 12,
+                              "fontWeight": "700"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "iENo2",
+                          "name": "Raise Quick 半池",
+                          "width": 90,
+                          "height": 34,
+                          "fill": "#239965",
+                          "cornerRadius": 8,
+                          "stroke": "#FFFFFF20",
+                          "strokeWidth": 1,
+                          "layout": "vertical",
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "d8FeM1",
+                              "name": "Raise Quick 半池 Label",
+                              "fill": "#FFFFFF",
+                              "content": "半池",
+                              "fontFamily": "$font-body",
+                              "fontSize": 12,
+                              "fontWeight": "700"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "Rrbzr",
+                          "name": "Raise Quick 满池",
+                          "width": 90,
+                          "height": 34,
+                          "fill": "#239965",
+                          "cornerRadius": 8,
+                          "stroke": "#FFFFFF20",
+                          "strokeWidth": 1,
+                          "layout": "vertical",
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "sUrsc",
+                              "name": "Raise Quick 满池 Label",
+                              "fill": "#FFFFFF",
+                              "content": "满池",
+                              "fontFamily": "$font-body",
+                              "fontSize": 12,
+                              "fontWeight": "700"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "vn941",
+                          "name": "Raise Quick 全压",
+                          "width": 94,
+                          "height": 34,
+                          "fill": "#F5C051",
+                          "cornerRadius": 8,
+                          "stroke": "#FFFFFF20",
+                          "strokeWidth": 1,
+                          "layout": "vertical",
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "lNhPH",
+                              "name": "Raise Quick 全压 Label",
+                              "fill": "#182C47",
+                              "content": "全压",
+                              "fontFamily": "$font-body",
+                              "fontSize": 12,
+                              "fontWeight": "700"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "emE5K",
+                      "x": 282,
+                      "y": 148,
+                      "name": "Raise Modal Actions",
+                      "width": 314,
+                      "height": 36,
+                      "gap": 10,
+                      "justifyContent": "end",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "y9wol6",
+                          "name": "Cancel Raise",
+                          "width": 120,
+                          "height": 36,
+                          "fill": "#713B45",
+                          "cornerRadius": 11,
+                          "stroke": "#B96670",
+                          "strokeWidth": 1,
+                          "layout": "vertical",
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "uhTLz",
+                              "name": "Cancel Raise Label",
+                              "fill": "#FFE8EA",
+                              "content": "取消",
+                              "fontFamily": "$font-body",
+                              "fontSize": 13,
+                              "fontWeight": "650"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "AalSz",
+                          "name": "Confirm Raise",
+                          "width": 184,
+                          "height": 36,
+                          "fill": "#239965",
+                          "cornerRadius": 11,
+                          "stroke": "#84D8B4",
+                          "strokeWidth": 1,
+                          "layout": "vertical",
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "bs2Mf",
+                              "name": "Confirm Raise Label",
+                              "fill": "#FFFFFF",
+                              "content": "确认加注",
+                              "fontFamily": "$font-body",
+                              "fontSize": 13,
+                              "fontWeight": "750"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "f3ruJh",
+              "name": "03 Showdown Result",
+              "clip": true,
+              "width": 1280,
+              "height": 720,
+              "fill": "$bg-deep",
+              "layout": "none",
+              "children": [
+                {
+                  "type": "rectangle",
+                  "cornerRadius": 160,
+                  "id": "aWHq3",
+                  "x": 0,
+                  "y": 160,
+                  "name": "Main Ambient Left",
+                  "fill": {
+                    "type": "gradient",
+                    "gradientType": "radial",
+                    "enabled": true,
+                    "opacity": 0.22,
+                    "rotation": 0,
+                    "size": {
+                      "width": 1,
+                      "height": 1
+                    },
+                    "colors": [
+                      {
+                        "color": "#217E5E",
+                        "position": 0
+                      },
+                      {
+                        "color": "#0B162B00",
+                        "position": 1
+                      }
+                    ]
+                  },
+                  "width": 340,
+                  "height": 260
+                },
+                {
+                  "type": "rectangle",
+                  "cornerRadius": 160,
+                  "id": "etH5u",
+                  "x": 940,
+                  "y": 120,
+                  "name": "Main Ambient Right",
+                  "fill": {
+                    "type": "gradient",
+                    "gradientType": "radial",
+                    "enabled": true,
+                    "opacity": 0.18,
+                    "rotation": 0,
+                    "size": {
+                      "width": 1,
+                      "height": 1
+                    },
+                    "colors": [
+                      {
+                        "color": "#F5C051",
+                        "position": 0
+                      },
+                      {
+                        "color": "#0B162B00",
+                        "position": 1
+                      }
+                    ]
+                  },
+                  "width": 340,
+                  "height": 280
+                },
+                {
+                  "id": "A6Gpf",
+                  "type": "ref",
+                  "ref": "uLRe3",
+                  "name": "Main Top Status Bar",
+                  "x": 24,
+                  "y": 16,
+                  "width": 1232,
+                  "height": 64,
+                  "descendants": {
+                    "lPT9o": {
+                      "content": "摊牌 · 结果"
+                    }
+                  }
+                },
+                {
+                  "type": "ellipse",
+                  "id": "FJo5W",
+                  "x": 138,
+                  "y": 104,
+                  "name": "Table Outer Ring",
+                  "fill": "#102D36",
+                  "width": 1004,
+                  "height": 438,
+                  "stroke": "$gold",
+                  "strokeWidth": 3,
+                  "effect": {
+                    "type": "shadow",
+                    "shadowType": "outer",
+                    "color": "#00000088",
+                    "offset": {
+                      "x": 0,
+                      "y": 12
+                    },
+                    "blur": 26
+                  }
+                },
+                {
+                  "type": "ellipse",
+                  "id": "bIqw2",
+                  "x": 160,
+                  "y": 126,
+                  "name": "Table Inner Ring",
+                  "fill": "$table-felt",
+                  "width": 960,
+                  "height": 394,
+                  "stroke": "#66BD98",
+                  "strokeWidth": 3,
+                  "effect": {
+                    "type": "shadow",
+                    "shadowType": "outer",
+                    "color": "#08251E88",
+                    "offset": {
+                      "x": 0,
+                      "y": 4
+                    },
+                    "blur": 18
+                  }
+                },
+                {
+                  "type": "ellipse",
+                  "id": "rTkoA",
+                  "x": 390,
+                  "y": 198,
+                  "name": "Table Center Mark",
+                  "fill": "#176C50",
+                  "width": 500,
+                  "height": 250,
+                  "stroke": "#74CBA7AA",
+                  "strokeWidth": 1
+                },
+                {
+                  "type": "text",
+                  "id": "cMep9",
+                  "x": 530,
+                  "y": 230,
+                  "name": "Table Watermark",
+                  "fill": "#F0F9FF26",
+                  "content": "POKER CLUB",
+                  "fontFamily": "$font-heading",
+                  "fontSize": 20,
+                  "fontWeight": "750",
+                  "letterSpacing": 4
+                },
+                {
+                  "type": "frame",
+                  "id": "MoGu0",
+                  "x": 568,
+                  "y": 266,
+                  "name": "Pot 620",
+                  "width": 144,
+                  "height": 42,
+                  "fill": "#0D2B35CC",
+                  "cornerRadius": 18,
+                  "stroke": "$gold",
+                  "strokeWidth": 1,
+                  "effect": {
+                    "type": "shadow",
+                    "shadowType": "outer",
+                    "color": "#F5C05166",
+                    "blur": 16
+                  },
+                  "gap": 8,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "id": "u5h5N",
+                      "type": "ref",
+                      "ref": "teBjU",
+                      "name": "Pot Chip",
+                      "width": 28,
+                      "height": 28,
+                      "descendants": {
+                        "BGFQY": {
+                          "content": ""
+                        }
+                      }
+                    },
+                    {
+                      "type": "text",
+                      "id": "yYexb",
+                      "name": "Pot Label",
+                      "fill": "$text-primary",
+                      "content": "底池 620",
+                      "fontFamily": "$font-body",
+                      "fontSize": 14,
+                      "fontWeight": "700"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "NbYMa",
+                  "x": 429,
+                  "y": 320,
+                  "name": "Community Card Slots",
+                  "width": 422,
+                  "height": 96,
+                  "gap": 10,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "k8vZ6q",
+                      "name": "Community Card 1",
+                      "width": 76,
+                      "height": 96,
+                      "fill": "#F7FBFF",
+                      "cornerRadius": 8,
+                      "stroke": "#D7E4EC",
+                      "strokeWidth": 1,
+                      "effect": {
+                        "type": "shadow",
+                        "shadowType": "outer",
+                        "color": "#00000055",
+                        "offset": {
+                          "x": 0,
+                          "y": 4
+                        },
+                        "blur": 8
+                      },
+                      "layout": "none",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "jIpZ8",
+                          "x": 8,
+                          "y": 5,
+                          "name": "Community Rank 1",
+                          "fill": "#172033",
+                          "content": "K",
+                          "fontFamily": "$font-heading",
+                          "fontSize": 20,
+                          "fontWeight": "750"
+                        },
+                        {
+                          "type": "text",
+                          "id": "rXwol",
+                          "x": 9,
+                          "y": 29,
+                          "name": "Community Suit 1",
+                          "fill": "#172033",
+                          "content": "♣",
+                          "fontFamily": "$font-body",
+                          "fontSize": 17,
+                          "fontWeight": "700"
+                        },
+                        {
+                          "type": "text",
+                          "id": "CZDnq",
+                          "x": 24,
+                          "y": 34,
+                          "name": "Community Center Suit 1",
+                          "fill": "#172033",
+                          "content": "♣",
+                          "fontFamily": "$font-body",
+                          "fontSize": 30,
+                          "fontWeight": "700"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "cz3AP",
+                      "name": "Community Card 2",
+                      "width": 76,
+                      "height": 96,
+                      "fill": "#F7FBFF",
+                      "cornerRadius": 8,
+                      "stroke": "#D7E4EC",
+                      "strokeWidth": 1,
+                      "effect": {
+                        "type": "shadow",
+                        "shadowType": "outer",
+                        "color": "#00000055",
+                        "offset": {
+                          "x": 0,
+                          "y": 4
+                        },
+                        "blur": 8
+                      },
+                      "layout": "none",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "ZATO1",
+                          "x": 8,
+                          "y": 5,
+                          "name": "Community Rank 2",
+                          "fill": "#D43B42",
+                          "content": "7",
+                          "fontFamily": "$font-heading",
+                          "fontSize": 20,
+                          "fontWeight": "750"
+                        },
+                        {
+                          "type": "text",
+                          "id": "V9T4hk",
+                          "x": 9,
+                          "y": 29,
+                          "name": "Community Suit 2",
+                          "fill": "#D43B42",
+                          "content": "♥",
+                          "fontFamily": "$font-body",
+                          "fontSize": 17,
+                          "fontWeight": "700"
+                        },
+                        {
+                          "type": "text",
+                          "id": "JdYtn",
+                          "x": 24,
+                          "y": 34,
+                          "name": "Community Center Suit 2",
+                          "fill": "#D43B42",
+                          "content": "♥",
+                          "fontFamily": "$font-body",
+                          "fontSize": 30,
+                          "fontWeight": "700"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "S5o60",
+                      "name": "Community Card 3",
+                      "width": 76,
+                      "height": 96,
+                      "fill": "#F7FBFF",
+                      "cornerRadius": 8,
+                      "stroke": "#D7E4EC",
+                      "strokeWidth": 1,
+                      "effect": {
+                        "type": "shadow",
+                        "shadowType": "outer",
+                        "color": "#00000055",
+                        "offset": {
+                          "x": 0,
+                          "y": 4
+                        },
+                        "blur": 8
+                      },
+                      "layout": "none",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "n392ol",
+                          "x": 8,
+                          "y": 5,
+                          "name": "Community Rank 3",
+                          "fill": "#172033",
+                          "content": "2",
+                          "fontFamily": "$font-heading",
+                          "fontSize": 20,
+                          "fontWeight": "750"
+                        },
+                        {
+                          "type": "text",
+                          "id": "Y6UUiK",
+                          "x": 9,
+                          "y": 29,
+                          "name": "Community Suit 3",
+                          "fill": "#172033",
+                          "content": "♠",
+                          "fontFamily": "$font-body",
+                          "fontSize": 17,
+                          "fontWeight": "700"
+                        },
+                        {
+                          "type": "text",
+                          "id": "E7YIA1",
+                          "x": 24,
+                          "y": 34,
+                          "name": "Community Center Suit 3",
+                          "fill": "#172033",
+                          "content": "♠",
+                          "fontFamily": "$font-body",
+                          "fontSize": 30,
+                          "fontWeight": "700"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "phlnX",
+                      "name": "Community Card 4",
+                      "width": 76,
+                      "height": 96,
+                      "fill": "#F7FBFF",
+                      "cornerRadius": 8,
+                      "stroke": "#D7E4EC",
+                      "strokeWidth": 1,
+                      "effect": {
+                        "type": "shadow",
+                        "shadowType": "outer",
+                        "color": "#00000055",
+                        "offset": {
+                          "x": 0,
+                          "y": 4
+                        },
+                        "blur": 8
+                      },
+                      "layout": "none",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "g6NElt",
+                          "x": 8,
+                          "y": 5,
+                          "name": "Community Rank 4",
+                          "fill": "#172033",
+                          "content": "Q",
+                          "fontFamily": "$font-heading",
+                          "fontSize": 20,
+                          "fontWeight": "750"
+                        },
+                        {
+                          "type": "text",
+                          "id": "kg4iM",
+                          "x": 9,
+                          "y": 29,
+                          "name": "Community Suit 4",
+                          "fill": "#172033",
+                          "content": "♣",
+                          "fontFamily": "$font-body",
+                          "fontSize": 17,
+                          "fontWeight": "700"
+                        },
+                        {
+                          "type": "text",
+                          "id": "vTCbk",
+                          "x": 24,
+                          "y": 34,
+                          "name": "Community Center Suit 4",
+                          "fill": "#172033",
+                          "content": "♣",
+                          "fontFamily": "$font-body",
+                          "fontSize": 30,
+                          "fontWeight": "700"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "yBqbf",
+                      "name": "Community Card 5",
+                      "width": 76,
+                      "height": 96,
+                      "fill": "#F7FBFF",
+                      "cornerRadius": 8,
+                      "stroke": "#D7E4EC",
+                      "strokeWidth": 1,
+                      "effect": {
+                        "type": "shadow",
+                        "shadowType": "outer",
+                        "color": "#00000055",
+                        "offset": {
+                          "x": 0,
+                          "y": 4
+                        },
+                        "blur": 8
+                      },
+                      "layout": "none",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "H3GEO",
+                          "x": 8,
+                          "y": 5,
+                          "name": "Community Rank 5",
+                          "fill": "#D43B42",
+                          "content": "4",
+                          "fontFamily": "$font-heading",
+                          "fontSize": 20,
+                          "fontWeight": "750"
+                        },
+                        {
+                          "type": "text",
+                          "id": "d0Uk2M",
+                          "x": 9,
+                          "y": 29,
+                          "name": "Community Suit 5",
+                          "fill": "#D43B42",
+                          "content": "♦",
+                          "fontFamily": "$font-body",
+                          "fontSize": 17,
+                          "fontWeight": "700"
+                        },
+                        {
+                          "type": "text",
+                          "id": "SabxC",
+                          "x": 24,
+                          "y": 34,
+                          "name": "Community Center Suit 5",
+                          "fill": "#D43B42",
+                          "content": "♦",
+                          "fontFamily": "$font-body",
+                          "fontSize": 30,
+                          "fontWeight": "700"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "id": "G1QkJ",
+                  "type": "ref",
+                  "ref": "JkKYy",
+                  "name": "AI Seat 1",
+                  "x": 170,
+                  "y": 108,
+                  "width": 238,
+                  "height": 76,
+                  "descendants": {
+                    "FF1Kv": {
+                      "content": "Luna"
+                    },
+                    "p5lWn4": {
+                      "content": "3,240"
+                    },
+                    "P9qEJi": {
+                      "content": "已跟注 40",
+                      "fill": "$text-muted"
+                    },
+                    "U9iQH": {
+                      "enabled": true
+                    },
+                    "zcaap": {
+                      "content": "D"
+                    }
+                  }
+                },
+                {
+                  "id": "KZNdr",
+                  "type": "ref",
+                  "ref": "JkKYy",
+                  "name": "AI Seat 2",
+                  "x": 521,
+                  "y": 88,
+                  "width": 238,
+                  "height": 76,
+                  "descendants": {
+                    "FF1Kv": {
+                      "content": "山雀"
+                    },
+                    "p5lWn4": {
+                      "content": "4,160"
+                    },
+                    "P9qEJi": {
+                      "content": "等待",
+                      "fill": "$text-muted"
+                    },
+                    "U9iQH": {
+                      "enabled": true
+                    },
+                    "zcaap": {
+                      "content": "SB"
+                    }
+                  }
+                },
+                {
+                  "id": "LPxz4",
+                  "type": "ref",
+                  "ref": "JkKYy",
+                  "name": "AI Seat 3",
+                  "x": 872,
+                  "y": 108,
+                  "width": 238,
+                  "height": 76,
+                  "descendants": {
+                    "FF1Kv": {
+                      "content": "Marco"
+                    },
+                    "p5lWn4": {
+                      "content": "2,620"
+                    },
+                    "P9qEJi": {
+                      "content": "已下注 40",
+                      "fill": "$text-muted"
+                    },
+                    "U9iQH": {
+                      "enabled": false
+                    },
+                    "zcaap": {
+                      "content": ""
+                    }
+                  }
+                },
+                {
+                  "id": "gHUCG",
+                  "type": "ref",
+                  "ref": "JkKYy",
+                  "name": "AI Seat 4",
+                  "x": 72,
+                  "y": 350,
+                  "width": 238,
+                  "height": 76,
+                  "descendants": {
+                    "FF1Kv": {
+                      "content": "夜航"
+                    },
+                    "p5lWn4": {
+                      "content": "5,040"
+                    },
+                    "P9qEJi": {
+                      "content": "弃牌",
+                      "fill": "#6F8497"
+                    },
+                    "U9iQH": {
+                      "enabled": false
+                    },
+                    "zcaap": {
+                      "content": ""
+                    }
+                  }
+                },
+                {
+                  "id": "asPRN",
+                  "type": "ref",
+                  "ref": "JkKYy",
+                  "name": "AI Seat 5",
+                  "x": 970,
+                  "y": 350,
+                  "width": 238,
+                  "height": 76,
+                  "descendants": {
+                    "FF1Kv": {
+                      "content": "Nova"
+                    },
+                    "p5lWn4": {
+                      "content": "3,880"
+                    },
+                    "P9qEJi": {
+                      "content": "思考中…",
+                      "fill": "$text-muted"
+                    },
+                    "U9iQH": {
+                      "enabled": false
+                    },
+                    "zcaap": {
+                      "content": ""
+                    }
+                  }
+                },
+                {
+                  "id": "Q5Er4",
+                  "type": "ref",
+                  "ref": "OYeI2"
+                },
+                {
+                  "id": "kRXiK",
+                  "type": "ref",
+                  "ref": "OYeI2",
+                  "name": "AI Hole Cards 2",
+                  "x": 607,
+                  "y": 166,
+                  "width": 64,
+                  "height": 50
+                },
+                {
+                  "id": "FNxvm",
+                  "type": "ref",
+                  "ref": "OYeI2",
+                  "name": "AI Hole Cards 3",
+                  "x": 953,
+                  "y": 187,
+                  "width": 64,
+                  "height": 50
+                },
+                {
+                  "id": "MpiL2",
+                  "type": "ref",
+                  "ref": "OYeI2",
+                  "name": "AI Hole Cards 4",
+                  "x": 224,
+                  "y": 380,
+                  "width": 64,
+                  "height": 50
+                },
+                {
+                  "id": "zM560",
+                  "type": "ref",
+                  "ref": "OYeI2",
+                  "name": "AI Hole Cards 5",
+                  "x": 992,
+                  "y": 380,
+                  "width": 64,
+                  "height": 50
+                },
+                {
+                  "id": "q8wRwq",
+                  "type": "ref",
+                  "ref": "U3dQs",
+                  "stroke": "$gold",
+                  "strokeWidth": 3,
+                  "effect": [
+                    {
+                      "type": "shadow",
+                      "shadowType": "outer",
+                      "color": "#F5C05188",
+                      "blur": 26,
+                      "spread": 5
+                    },
+                    {
+                      "type": "shadow",
+                      "shadowType": "outer",
+                      "color": "#00000077",
+                      "offset": {
+                        "x": 0,
+                        "y": 8
+                      },
+                      "blur": 16
+                    }
+                  ],
+                  "name": "Main Player Seat",
+                  "x": 514,
+                  "y": 524,
+                  "width": 252,
+                  "height": 76,
+                  "descendants": {
+                    "rd1eC": {
+                      "content": "5,620"
+                    },
+                    "JpRvm": {
+                      "content": "摊牌获胜",
+                      "fill": "#F8D982"
+                    },
+                    "kpg2a": {
+                      "content": "BB"
+                    }
+                  }
+                },
+                {
+                  "id": "n574Aq",
+                  "type": "ref",
+                  "ref": "p51HtV",
+                  "name": "Player Card K Diamond",
+                  "x": 562,
+                  "y": 412,
+                  "width": 76,
+                  "height": 108
+                },
+                {
+                  "id": "W3sfok",
+                  "type": "ref",
+                  "ref": "p51HtV",
+                  "name": "Player Card 9 Spade",
+                  "x": 642,
+                  "y": 412,
+                  "width": 76,
+                  "height": 108,
+                  "descendants": {
+                    "P4P8R": {
+                      "content": "9",
+                      "fill": "#172033"
+                    },
+                    "WcOQw": {
+                      "content": "♠",
+                      "fill": "#172033"
+                    },
+                    "cCzh7": {
+                      "content": "♠",
+                      "fill": "#172033"
+                    }
+                  }
+                },
+                {
+                  "type": "frame",
+                  "id": "xUE4E",
+                  "x": 24,
+                  "y": 594,
+                  "name": "Motion Notes",
+                  "enabled": false,
+                  "width": 430,
+                  "height": 42,
+                  "layout": "vertical",
+                  "gap": 3,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "v9lC8",
+                      "name": "Motion Note Line 1",
+                      "fill": "$text-muted",
+                      "content": "动效 · 发牌 160ms · AI 思考 550–900ms",
+                      "fontFamily": "$font-caption",
+                      "fontSize": 10,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "text",
+                      "id": "eNZJz",
+                      "name": "Motion Note Line 2",
+                      "fill": "#7FA59A",
+                      "content": "筹码入池 · 公共牌分批翻开",
+                      "fontFamily": "$font-body",
+                      "fontSize": 11,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "KSZfh",
+                  "x": 24,
+                  "y": 648,
+                  "name": "Bottom Action Bar",
+                  "enabled": false,
+                  "width": 1232,
+                  "height": 60,
+                  "fill": "#071121DD",
+                  "cornerRadius": 18,
+                  "stroke": "#29435E",
+                  "strokeWidth": 1,
+                  "gap": 12,
+                  "padding": 4,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "id": "xeQqa",
+                      "type": "ref",
+                      "ref": "Z4nWp",
+                      "name": "Fold Action",
+                      "width": 292,
+                      "height": 52
+                    },
+                    {
+                      "id": "EIOuF",
+                      "type": "ref",
+                      "ref": "LDbN1",
+                      "name": "Call Action",
+                      "width": 292,
+                      "height": 52
+                    },
+                    {
+                      "id": "I02yK",
+                      "type": "ref",
+                      "ref": "amj8F",
+                      "name": "Raise Action",
+                      "width": 292,
+                      "height": 52
+                    },
+                    {
+                      "id": "q82YI",
+                      "type": "ref",
+                      "ref": "o0BVMN",
+                      "name": "All In Action",
+                      "width": 292,
+                      "height": 52
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "CGYJ5",
+                  "x": 424,
+                  "y": 206,
+                  "name": "Showdown Win Banner",
+                  "width": 432,
+                  "height": 54,
+                  "fill": "#0D2B35EE",
+                  "cornerRadius": 18,
+                  "stroke": "$gold",
+                  "strokeWidth": 2,
+                  "effect": {
+                    "type": "shadow",
+                    "shadowType": "outer",
+                    "color": "#F5C05166",
+                    "blur": 22,
+                    "spread": 3
+                  },
+                  "layout": "vertical",
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "BasmI",
+                      "name": "Showdown Win Text",
+                      "fill": "$gold",
+                      "content": "你赢得 620 · 一对 K",
+                      "fontFamily": "$font-heading",
+                      "fontSize": 20,
+                      "fontWeight": "800"
+                    }
+                  ]
+                },
+                {
+                  "type": "path",
+                  "id": "xcHnW",
+                  "x": 716,
+                  "y": 292,
+                  "name": "Chip Return Arrow",
+                  "geometry": "M2 2c143 44 146 172 18 226m14-20l-14 20 26-2",
+                  "viewBox": [
+                    0,
+                    0,
+                    152,
+                    236
+                  ],
+                  "fill": "#00000000",
+                  "width": 152,
+                  "height": 236,
+                  "stroke": "$gold",
+                  "strokeWidth": 3,
+                  "strokeLinejoin": "round",
+                  "strokeLinecap": "round",
+                  "effect": {
+                    "type": "shadow",
+                    "shadowType": "outer",
+                    "color": "#F5C05177",
+                    "blur": 8
+                  }
+                },
+                {
+                  "type": "frame",
+                  "id": "YzPZM",
+                  "x": 842,
+                  "y": 421,
+                  "name": "Chip Return Label",
+                  "width": 104,
+                  "height": 30,
+                  "fill": "#14304ACC",
+                  "cornerRadius": 11,
+                  "stroke": "#F5C05188",
+                  "strokeWidth": 1,
+                  "layout": "vertical",
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "k1NFy",
+                      "name": "Chip Return Text",
+                      "fill": "$gold",
+                      "content": "筹码回流",
+                      "fontFamily": "$font-body",
+                      "fontSize": 12,
+                      "fontWeight": "700"
+                    }
+                  ]
+                },
+                {
+                  "id": "Rq6yh",
+                  "type": "ref",
+                  "ref": "teBjU",
+                  "name": "Returning Chip 1",
+                  "x": 797,
+                  "y": 340,
+                  "width": 32,
+                  "height": 32,
+                  "descendants": {
+                    "BGFQY": {
+                      "content": ""
+                    }
+                  }
+                },
+                {
+                  "id": "Yh5kk",
+                  "type": "ref",
+                  "ref": "teBjU",
+                  "name": "Returning Chip 2",
+                  "x": 820,
+                  "y": 467,
+                  "width": 28,
+                  "height": 28,
+                  "descendants": {
+                    "BGFQY": {
+                      "content": ""
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "variables": {
+    "bg-deep": {
+      "type": "color",
+      "value": "#0B162B"
+    },
+    "top-bar": {
+      "type": "color",
+      "value": "#182C47"
+    },
+    "modal": {
+      "type": "color",
+      "value": "#14304A"
+    },
+    "table-felt": {
+      "type": "color",
+      "value": "#217E5E"
+    },
+    "gold": {
+      "type": "color",
+      "value": "#F5C051"
+    },
+    "text-primary": {
+      "type": "color",
+      "value": "#F0F9FF"
+    },
+    "text-muted": {
+      "type": "color",
+      "value": "#9AB0C5"
+    },
+    "danger": {
+      "type": "color",
+      "value": "#C94545"
+    },
+    "call-blue": {
+      "type": "color",
+      "value": "#2879C9"
+    },
+    "raise-green": {
+      "type": "color",
+      "value": "#239965"
+    },
+    "card-ink": {
+      "type": "color",
+      "value": "#142033"
+    },
+    "font-heading": {
+      "type": "string",
+      "value": "Geist"
+    },
+    "font-body": {
+      "type": "string",
+      "value": "Inter"
+    },
+    "font-caption": {
+      "type": "string",
+      "value": "IBM Plex Mono"
+    },
+    "radius-status": {
+      "type": "number",
+      "value": 18
+    },
+    "radius-seat": {
+      "type": "number",
+      "value": 16
+    },
+    "radius-button": {
+      "type": "number",
+      "value": 11
+    },
+    "radius-input": {
+      "type": "number",
+      "value": 8
+    }
+  },
+  "fileToken": "fe9dbd0d-cc71-4bce-b77b-11d5661b7b01"
+}

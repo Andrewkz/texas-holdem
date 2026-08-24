@@ -1,0 +1,9 @@
+{
+  "extends": "./temp/tsconfig.cocos.json",
+  "compilerOptions": {
+    "strict": false,
+    "skipLibCheck": true,
+    "lib": ["ES2015", "DOM"]
+  },
+  "include": ["assets/**/*.ts"]
+}
