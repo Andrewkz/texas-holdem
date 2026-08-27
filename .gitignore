@@ -8,7 +8,7 @@ local/
 build/
 pages-build/
 profiles/
-native
+/native/
 #//////////////////////////
 # NPM
 #//////////////////////////
