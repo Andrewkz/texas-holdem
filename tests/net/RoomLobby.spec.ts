@@ -143,6 +143,14 @@ describe('room lobby', () => {
     expect(alice.connection.last('roomState')?.room.seats[1].connected).toBe(true);
   });
 
+  it('rejects reconnect from a connection already seated', () => {
+    const manager = new RoomManager();
+    const alice = createRoom(manager);
+
+    manager.handleMessage(alice.connection, { type: 'reconnect', roomCode: alice.joined.roomCode, token: alice.joined.token });
+    expect(alice.connection.last('error')?.code).toBe('bad-message');
+  });
+
   it('rejects leaveRoom from a connection not in any room', () => {
     const manager = new RoomManager();
     const stranger = connect(manager);

@@ -77,6 +77,11 @@ export class RoomManager {
         return;
       }
       case 'reconnect': {
+        if (this.states.get(connection)?.roomCode) {
+          this.sendError(connection, 'bad-message', '请先离开当前房间');
+          return;
+        }
+
         const room = this.rooms.get(message.roomCode.toUpperCase());
         const player = room?.reconnectPlayer(message.token, connection) ?? null;
 
@@ -123,16 +128,23 @@ export class RoomManager {
           return;
         }
 
-        if (state.playerId !== room.hostId) {
-          this.sendError(connection, 'not-host', '只有房主可以开始游戏');
-          return;
-        }
+        const result = room.startGame(state.playerId);
 
-        this.sendError(connection, 'bad-message', '至少需要 2 名玩家');
+        if (result.ok === false) {
+          this.sendError(connection, result.code, result.message);
+        }
         return;
       }
       case 'action': {
-        this.sendError(connection, 'game-not-started', '牌局尚未开始');
+        const state = this.states.get(connection);
+        const room = state?.roomCode ? this.rooms.get(state.roomCode) : undefined;
+
+        if (!state?.roomCode || !state.playerId || !room) {
+          this.sendError(connection, 'not-in-room', '你不在任何房间中');
+          return;
+        }
+
+        room.handleAction(state.playerId, message.action);
         return;
       }
     }
