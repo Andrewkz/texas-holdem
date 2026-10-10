@@ -49,6 +49,11 @@ export class RoomManager {
   public handleMessage(connection: ClientConnection, message: ClientMessage): void {
     switch (message.type) {
       case 'createRoom': {
+        if (this.states.get(connection)?.roomCode) {
+          this.sendError(connection, 'bad-message', '请先离开当前房间');
+          return;
+        }
+
         const code = this.generateRoomCode();
         const room = new Room(code, this.roomOptions, () => this.rooms.delete(code));
         this.rooms.set(code, room);
@@ -56,6 +61,11 @@ export class RoomManager {
         return;
       }
       case 'joinRoom': {
+        if (this.states.get(connection)?.roomCode) {
+          this.sendError(connection, 'bad-message', '请先离开当前房间');
+          return;
+        }
+
         const room = this.rooms.get(message.roomCode.toUpperCase());
 
         if (!room) {
@@ -73,6 +83,12 @@ export class RoomManager {
         if (!room || !player) {
           this.sendError(connection, 'room-not-found', '无法恢复座位');
           return;
+        }
+
+        for (const [other, otherState] of this.states) {
+          if (other !== connection && otherState.roomCode === room.code && otherState.playerId === player.id) {
+            this.states.delete(other);
+          }
         }
 
         this.states.set(connection, { roomCode: room.code, playerId: player.id });
@@ -145,16 +161,18 @@ export class RoomManager {
   }
 
   private generateRoomCode(): string {
-    let code = '';
-
-    do {
-      code = Array.from(
+    for (let attempt = 0; attempt < 100; attempt += 1) {
+      const code = Array.from(
         { length: ROOM_CODE_LENGTH },
         () => ROOM_CODE_ALPHABET[Math.floor(this.random() * ROOM_CODE_ALPHABET.length)],
       ).join('');
-    } while (this.rooms.has(code));
 
-    return code;
+      if (!this.rooms.has(code)) {
+        return code;
+      }
+    }
+
+    throw new Error('Unable to allocate room code');
   }
 
   private sendError(connection: ClientConnection, code: ErrorCode, message: string): void {

@@ -114,4 +114,48 @@ describe('room lobby', () => {
     manager.handleMessage(bob.connection, { type: 'startGame' });
     expect(bob.connection.last('error')?.code).toBe('not-host');
   });
+
+  it('rejects createRoom/joinRoom from a connection already seated', () => {
+    const manager = new RoomManager();
+    const alice = createRoom(manager);
+    const carol = createRoom(manager, 'Carol');
+
+    manager.handleMessage(alice.connection, { type: 'joinRoom', roomCode: carol.joined.roomCode, nickname: 'Ally' });
+    expect(alice.connection.last('error')?.code).toBe('bad-message');
+
+    manager.handleMessage(alice.connection, { type: 'createRoom', nickname: 'Ally' });
+    expect(alice.connection.last('error')?.code).toBe('bad-message');
+
+    expect(alice.connection.last('roomState')?.room.seats).toHaveLength(1);
+    expect(carol.connection.last('roomState')?.room.seats).toHaveLength(1);
+  });
+
+  it('keeps a reconnected seat online when the superseded connection closes', () => {
+    const manager = new RoomManager();
+    const alice = createRoom(manager);
+    const bob = joinRoom(manager, alice.joined.roomCode, 'Bob');
+
+    const back = connect(manager);
+    manager.handleMessage(back, { type: 'reconnect', roomCode: alice.joined.roomCode, token: bob.joined.token });
+    expect(back.last('joined')?.playerId).toBe(bob.joined.playerId);
+
+    manager.handleClose(bob.connection);
+    expect(alice.connection.last('roomState')?.room.seats[1].connected).toBe(true);
+  });
+
+  it('rejects leaveRoom from a connection not in any room', () => {
+    const manager = new RoomManager();
+    const stranger = connect(manager);
+    manager.handleMessage(stranger, { type: 'leaveRoom' });
+    expect(stranger.last('error')?.code).toBe('not-in-room');
+  });
+
+  it('never leaks another player\'s token in broadcasts', () => {
+    const manager = new RoomManager();
+    const alice = createRoom(manager);
+    const bob = joinRoom(manager, alice.joined.roomCode, 'Bob');
+
+    expect(JSON.stringify(alice.connection.sent)).not.toContain(bob.joined.token);
+    expect(JSON.stringify(bob.connection.sent)).not.toContain(alice.joined.token);
+  });
 });
