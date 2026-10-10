@@ -46,5 +46,8 @@ describe('parseClientMessage', () => {
     expect(parseClientMessage({ type: 'action', action: { type: 'raise', to: 'big' } })).toBeNull();
     expect(parseClientMessage({ type: 'action', action: { type: 'surrender' } })).toBeNull();
     expect(parseClientMessage({ type: 'action' })).toBeNull();
+    expect(parseClientMessage({ type: 'action', action: { type: 'call', amount: NaN } })).toBeNull();
+    expect(parseClientMessage({ type: 'action', action: { type: 'raise', to: -100 } })).toBeNull();
+    expect(parseClientMessage({ type: 'action', action: { type: 'raise', to: Infinity } })).toBeNull();
   });
 });

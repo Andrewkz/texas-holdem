@@ -111,9 +111,13 @@ function parsePlayerAction(raw: unknown): PlayerAction | null {
     case 'all-in':
       return { type: action.type };
     case 'call':
-      return typeof action.amount === 'number' ? { type: 'call', amount: action.amount } : null;
+      return typeof action.amount === 'number' && Number.isFinite(action.amount) && action.amount > 0
+        ? { type: 'call', amount: action.amount }
+        : null;
     case 'raise':
-      return typeof action.to === 'number' ? { type: 'raise', to: action.to } : null;
+      return typeof action.to === 'number' && Number.isFinite(action.to) && action.to > 0
+        ? { type: 'raise', to: action.to }
+        : null;
     default:
       return null;
   }
