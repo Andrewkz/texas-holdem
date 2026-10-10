@@ -95,3 +95,54 @@ describe('PokerEngine', () => {
     });
   });
 });
+
+
+describe('createWithPlayers', () => {
+  const two = [{ id: 'a', name: 'A' }, { id: 'b', name: 'B' }];
+
+  it('rejects tables with fewer than 2 or more than 6 players', () => {
+    expect(() => PokerEngine.createWithPlayers([{ id: 'a', name: 'A' }])).toThrow('between 2 and 6');
+    expect(() => PokerEngine.createWithPlayers(
+      ['a', 'b', 'c', 'd', 'e', 'f', 'g'].map((id) => ({ id, name: id })),
+    )).toThrow('between 2 and 6');
+  });
+
+  it('posts the small blind from the dealer in heads-up play', () => {
+    const game = PokerEngine.createWithPlayers(two, { random: () => 0.5 });
+    const state = game.startHand();
+
+    expect(state.dealerPlayerId).toBe('a');
+    expect(state.players.find(({ id }) => id === 'a')).toMatchObject({ streetContribution: 20 });
+    expect(state.players.find(({ id }) => id === 'b')).toMatchObject({ streetContribution: 40 });
+    expect(state.actingPlayerId).toBe('a');
+  });
+
+  it('rotates the dealer to the next player on the following hand', () => {
+    const game = PokerEngine.createWithPlayers(two, { random: () => 0.5 });
+    game.startHand();
+    game.act({ type: 'fold' });
+    expect(game.snapshot().street).toBe('settled');
+
+    const next = game.startHand();
+    expect(next.dealerPlayerId).toBe('b');
+    expect(next.players.find(({ id }) => id === 'b')).toMatchObject({ streetContribution: 20 });
+  });
+
+  it('honours initialDealerIndex when recreating a table', () => {
+    const game = PokerEngine.createWithPlayers(two, { random: () => 0.5, initialDealerIndex: 0 });
+    expect(game.startHand().dealerPlayerId).toBe('b');
+  });
+
+  it('keeps the standard blind order with three or more players', () => {
+    const game = PokerEngine.createWithPlayers(
+      [{ id: 'a', name: 'A' }, { id: 'b', name: 'B' }, { id: 'c', name: 'C' }],
+      { random: () => 0.5 },
+    );
+    const state = game.startHand();
+
+    expect(state.dealerPlayerId).toBe('a');
+    expect(state.players.find(({ id }) => id === 'b')).toMatchObject({ streetContribution: 20 });
+    expect(state.players.find(({ id }) => id === 'c')).toMatchObject({ streetContribution: 40 });
+    expect(state.actingPlayerId).toBe('a');
+  });
+});

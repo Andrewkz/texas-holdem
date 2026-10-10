@@ -7,10 +7,11 @@ interface PlayerState extends PlayerSnapshot {
   holeCards: Card[];
 }
 
-interface CreateSixSeatOptions {
+interface CreateEngineOptions {
   deck?: Deck;
   random?: () => number;
   stacks?: Partial<Record<string, number>>;
+  initialDealerIndex?: number;
 }
 
 const SMALL_BLIND = 20;
@@ -31,21 +32,33 @@ export class PokerEngine {
   private communityCards: Card[] = [];
   private handEvents: EngineEvent[] = [];
 
-  private constructor(options: CreateSixSeatOptions, players: PlayerState[]) {
+  private constructor(options: CreateEngineOptions, players: PlayerState[]) {
     this.firstDeck = options.deck ?? null;
     this.random = options.random ?? Math.random;
     this.players = players;
+    this.dealerIndex = options.initialDealerIndex ?? -1;
   }
 
-  public static createSixSeat(options: CreateSixSeatOptions = {}): PokerEngine {
-    return new PokerEngine(options, [
-      createPlayer('ai-1', 'Nora', options.stacks?.['ai-1']),
-      createPlayer('ai-2', 'Miles', options.stacks?.['ai-2']),
-      createPlayer('ai-3', 'Aria', options.stacks?.['ai-3']),
-      createPlayer('ai-4', 'Leo', options.stacks?.['ai-4']),
-      createPlayer('ai-5', 'Sora', options.stacks?.['ai-5']),
-      createPlayer('player', '你', options.stacks?.player),
-    ]);
+  public static createSixSeat(options: CreateEngineOptions = {}): PokerEngine {
+    return PokerEngine.createWithPlayers([
+      { id: 'ai-1', name: 'Nora' },
+      { id: 'ai-2', name: 'Miles' },
+      { id: 'ai-3', name: 'Aria' },
+      { id: 'ai-4', name: 'Leo' },
+      { id: 'ai-5', name: 'Sora' },
+      { id: 'player', name: '你' },
+    ], options);
+  }
+
+  public static createWithPlayers(players: readonly { id: string; name: string }[], options: CreateEngineOptions = {}): PokerEngine {
+    if (players.length < 2 || players.length > 6) {
+      throw new Error('Need between 2 and 6 players');
+    }
+
+    return new PokerEngine(
+      options,
+      players.map((player) => createPlayer(player.id, player.name, options.stacks?.[player.id])),
+    );
   }
 
   public startHand(): EngineSnapshot {
@@ -75,7 +88,9 @@ export class PokerEngine {
       player.holeCards = [];
     }
 
-    const smallBlindIndex = this.nextPlayingIndex(this.dealerIndex);
+    const smallBlindIndex = this.playingPlayers().length === 2
+      ? this.dealerIndex
+      : this.nextPlayingIndex(this.dealerIndex);
     const bigBlindIndex = this.nextPlayingIndex(smallBlindIndex);
     this.postForcedBet(smallBlindIndex, SMALL_BLIND);
     this.postForcedBet(bigBlindIndex, BIG_BLIND);
@@ -159,6 +174,7 @@ export class PokerEngine {
       handId: this.handId,
       street: this.street,
       actingPlayerId: this.actingPlayer?.id ?? null,
+      dealerPlayerId: this.street === 'settled' ? null : this.players[this.dealerIndex]?.id ?? null,
       pot: this.players.reduce((total, player) => total + player.totalContribution, 0),
       communityCards: [...this.communityCards],
       legalActions: this.legalActions(),

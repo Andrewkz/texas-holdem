@@ -32,6 +32,7 @@ export interface EngineSnapshot {
   handId: number;
   street: Street;
   actingPlayerId: string | null;
+  dealerPlayerId: string | null;
   pot: number;
   communityCards: Card[];
   legalActions: PlayerAction[];
