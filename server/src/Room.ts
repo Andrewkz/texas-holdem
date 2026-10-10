@@ -41,7 +41,7 @@ export class Room {
   protected readonly options: Required<RoomOptions>;
   private nextPlayerNumber = 1;
   private engine: PokerEngine | null = null;
-  private lastDealerIndex = -1;
+  private lastDealerPlayerId: string | null = null;
   private handNumber = 0;
   private actionTimer: ReturnType<typeof setTimeout> | null = null;
   private betweenHandsTimer: ReturnType<typeof setTimeout> | null = null;
@@ -126,6 +126,11 @@ export class Room {
     }
 
     if (this.players.length === 0) {
+      this.clearActionTimer();
+      if (this.betweenHandsTimer) {
+        clearTimeout(this.betweenHandsTimer);
+        this.betweenHandsTimer = null;
+      }
       this.onEmpty();
       return;
     }
@@ -174,8 +179,8 @@ export class Room {
       return { ok: false, code: 'bad-message', message: '牌局已开始' };
     }
 
-    if (this.seatedPlayers().length < 2) {
-      return { ok: false, code: 'bad-message', message: '至少需要 2 名玩家' };
+    if (this.seatedPlayers().filter((player) => player.stack > 0).length < 2) {
+      return { ok: false, code: 'bad-message', message: '至少需要 2 名有筹码的玩家' };
     }
 
     this.startHand();
@@ -211,16 +216,20 @@ export class Room {
     }
 
     this.phase = 'playing';
+    // 按玩家 id 追踪庄家，避免有人离座后数组下标漂移导致轮转错位
+    const initialDealerIndex = this.lastDealerPlayerId
+      ? seated.findIndex((player) => player.id === this.lastDealerPlayerId)
+      : -1;
     this.engine = PokerEngine.createWithPlayers(
       seated.map((player) => ({ id: player.id, name: player.nickname })),
       {
         stacks: Object.fromEntries(seated.map((player) => [player.id, player.stack])),
-        initialDealerIndex: this.lastDealerIndex,
+        initialDealerIndex,
       },
     );
 
     const snapshot = this.engine.startHand();
-    this.lastDealerIndex = Math.max(0, seated.findIndex((player) => player.id === snapshot.dealerPlayerId));
+    this.lastDealerPlayerId = snapshot.dealerPlayerId;
     // 引擎每手重建、handId 归零，房间里自行累计手牌序号
     this.handNumber += 1;
     this.broadcast({ type: 'handStart', handId: this.handNumber, dealerPlayerId: snapshot.dealerPlayerId! });
@@ -239,10 +248,15 @@ export class Room {
 
     try {
       events = this.engine!.act(action);
-    } catch {
+    } catch (error) {
       const player = this.players.find((candidate) => candidate.id === playerId);
       if (player) {
-        this.sendTo(player, { type: 'error', code: 'illegal-action', message: '行动不合法' });
+        if (error instanceof Error && error.message === 'Illegal action') {
+          this.sendTo(player, { type: 'error', code: 'illegal-action', message: '行动不合法' });
+        } else {
+          console.error(error);
+          this.sendTo(player, { type: 'error', code: 'bad-message', message: '服务器内部错误' });
+        }
       }
       return;
     }

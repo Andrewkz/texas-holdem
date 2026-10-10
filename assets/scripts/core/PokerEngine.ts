@@ -359,13 +359,13 @@ export class PokerEngine {
 
       if (this.street === 'preflop') {
         this.revealCommunity(3, events);
-        this.beginBettingRound('flop', this.nextPlayingIndex(this.dealerIndex));
+        this.beginBettingRound('flop', (this.dealerIndex + 1) % this.players.length);
       } else if (this.street === 'flop') {
         this.revealCommunity(1, events);
-        this.beginBettingRound('turn', this.nextPlayingIndex(this.dealerIndex));
+        this.beginBettingRound('turn', (this.dealerIndex + 1) % this.players.length);
       } else if (this.street === 'turn') {
         this.revealCommunity(1, events);
-        this.beginBettingRound('river', this.nextPlayingIndex(this.dealerIndex));
+        this.beginBettingRound('river', (this.dealerIndex + 1) % this.players.length);
       } else if (this.street === 'river') {
         this.settleShowdown(events);
         return;

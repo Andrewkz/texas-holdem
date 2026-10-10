@@ -165,4 +165,18 @@ describe('createWithPlayers', () => {
     expect(flop.actingPlayerId).toBe('b');
     expect(flop.dealerPlayerId).toBe('a');
   });
+
+  it('runs out the board without crashing when both players are all-in', () => {
+    const game = PokerEngine.createWithPlayers(two, { random: () => 0.5 });
+    game.startHand();
+
+    // heads-up：a 是庄家/小盲先行动，all-in 后 b 跟注，两人筹码全部入池
+    game.act({ type: 'all-in' });
+    game.act({ type: 'call', amount: 4960 });
+
+    const settled = game.snapshot();
+    expect(settled.street).toBe('settled');
+    expect(settled.communityCards).toHaveLength(5);
+    expect(settled.players.reduce((sum, player) => sum + player.stack, 0)).toBe(10000);
+  });
 });
