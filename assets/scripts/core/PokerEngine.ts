@@ -121,7 +121,12 @@ export class PokerEngine {
       });
     }
 
-    this.beginBettingRound('preflop', this.nextPlayingIndex(bigBlindIndex));
+    this.beginBettingRound('preflop', (bigBlindIndex + 1) % this.players.length);
+
+    // 盲注即全押时无人可行动，直接跑完公共牌并结算
+    if (this.pendingPlayerIds.size === 0 && this.activePlayers().length > 1) {
+      this.advance(this.handEvents);
+    }
 
     return this.snapshot();
   }

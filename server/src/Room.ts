@@ -1,7 +1,7 @@
 import { randomUUID } from 'node:crypto';
 
 import { PokerEngine } from '../../assets/scripts/core/PokerEngine';
-import { EngineEvent, PlayerAction } from '../../assets/scripts/core/types';
+import { EngineEvent, EngineSnapshot, PlayerAction } from '../../assets/scripts/core/types';
 import {
   ACTION_TIMEOUT_MS,
   BETWEEN_HANDS_MS,
@@ -220,19 +220,36 @@ export class Room {
     const initialDealerIndex = this.lastDealerPlayerId
       ? seated.findIndex((player) => player.id === this.lastDealerPlayerId)
       : -1;
-    this.engine = PokerEngine.createWithPlayers(
-      seated.map((player) => ({ id: player.id, name: player.nickname })),
-      {
-        stacks: Object.fromEntries(seated.map((player) => [player.id, player.stack])),
-        initialDealerIndex,
-      },
-    );
 
-    const snapshot = this.engine.startHand();
-    this.lastDealerPlayerId = snapshot.dealerPlayerId;
+    let snapshot: EngineSnapshot;
+    try {
+      this.engine = PokerEngine.createWithPlayers(
+        seated.map((player) => ({ id: player.id, name: player.nickname })),
+        {
+          stacks: Object.fromEntries(seated.map((player) => [player.id, player.stack])),
+          initialDealerIndex,
+        },
+      );
+      snapshot = this.engine.startHand();
+    } catch (error) {
+      // 兜底：引擎开局失败不能让定时器回调里的异常击垮进程，回退大厅
+      console.error(error);
+      this.phase = 'lobby';
+      this.engine = null;
+      this.broadcastRoomState();
+      return;
+    }
+
+    // 双盲全押等情形下引擎在开局内直接结算，此时快照不含庄家；
+    // 该情形只可能出现在 heads-up（小盲即庄家），从盲注事件找回庄家 id
+    const settledEvents = snapshot.street === 'settled' ? this.engine.takeEvents() : [];
+    const dealerPlayerId = snapshot.dealerPlayerId
+      ?? settledEvents.find((event) => event.type === 'blind-posted')?.playerId
+      ?? seated[0].id;
+    this.lastDealerPlayerId = dealerPlayerId;
     // 引擎每手重建、handId 归零，房间里自行累计手牌序号
     this.handNumber += 1;
-    this.broadcast({ type: 'handStart', handId: this.handNumber, dealerPlayerId: snapshot.dealerPlayerId! });
+    this.broadcast({ type: 'handStart', handId: this.handNumber, dealerPlayerId });
 
     for (const player of seated) {
       this.sendTo(player, { type: 'yourHand', handId: this.handNumber, cards: this.engine.getHoleCards(player.id) });
@@ -240,7 +257,34 @@ export class Room {
 
     this.broadcastRoomState();
     this.broadcastStateSync();
+
+    if (snapshot.street === 'settled') {
+      this.broadcastSettlementEvents(settledEvents);
+      this.finishHand();
+      return;
+    }
+
     this.scheduleActionTimeout();
+  }
+
+  private broadcastSettlementEvents(events: EngineEvent[]): void {
+    const reveals = events.filter((event): event is Extract<EngineEvent, { type: 'showdown' }> => event.type === 'showdown');
+    if (reveals.length > 0) {
+      this.broadcast({
+        type: 'showdown',
+        handId: this.handNumber,
+        reveals: reveals.map((event) => ({ playerId: event.playerId, cards: event.cards, handName: event.handName })),
+      });
+    }
+
+    const payouts = events.filter((event): event is Extract<EngineEvent, { type: 'pot-awarded' }> => event.type === 'pot-awarded');
+    if (payouts.length > 0) {
+      this.broadcast({
+        type: 'handResult',
+        handId: this.handNumber,
+        payouts: payouts.map((event) => ({ playerId: event.playerId, amount: event.amount, handName: event.handName })),
+      });
+    }
   }
 
   protected applyAction(playerId: string, action: PlayerAction): void {
@@ -267,23 +311,7 @@ export class Room {
       }
     }
 
-    const reveals = events.filter((event): event is Extract<EngineEvent, { type: 'showdown' }> => event.type === 'showdown');
-    if (reveals.length > 0) {
-      this.broadcast({
-        type: 'showdown',
-        handId: this.handNumber,
-        reveals: reveals.map((event) => ({ playerId: event.playerId, cards: event.cards, handName: event.handName })),
-      });
-    }
-
-    const payouts = events.filter((event): event is Extract<EngineEvent, { type: 'pot-awarded' }> => event.type === 'pot-awarded');
-    if (payouts.length > 0) {
-      this.broadcast({
-        type: 'handResult',
-        handId: this.handNumber,
-        payouts: payouts.map((event) => ({ playerId: event.playerId, amount: event.amount, handName: event.handName })),
-      });
-    }
+    this.broadcastSettlementEvents(events);
 
     this.broadcastStateSync();
 

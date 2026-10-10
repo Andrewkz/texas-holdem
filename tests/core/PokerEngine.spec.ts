@@ -179,4 +179,18 @@ describe('createWithPlayers', () => {
     expect(settled.communityCards).toHaveLength(5);
     expect(settled.players.reduce((sum, player) => sum + player.stack, 0)).toBe(10000);
   });
+
+  it('runs out the board immediately when both blinds are all-in', () => {
+    const game = PokerEngine.createWithPlayers(
+      [{ id: 'a', name: 'A' }, { id: 'b', name: 'B' }],
+      { random: () => 0.5, stacks: { a: 20, b: 40 } },
+    );
+
+    const state = game.startHand();
+
+    expect(state.street).toBe('settled');
+    expect(state.communityCards).toHaveLength(5);
+    const total = state.players.reduce((sum, player) => sum + player.stack, 0);
+    expect(total).toBe(60);
+  });
 });

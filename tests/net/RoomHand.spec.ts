@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { PokerEngine } from '../../assets/scripts/core/PokerEngine';
 import { PlayerAction } from '../../assets/scripts/core/types';
 import { RoomManager } from '../../server/src/RoomManager';
 import { createRoom, joinRoom } from './fakes';
@@ -218,14 +219,16 @@ describe('room hand flow', () => {
     const manager = createManager();
     const { alice, bob } = startTwoPlayerGame(manager);
 
-    // 全押对决，输家清零
+    // 全押对决，输家清零（固定洗牌结果避免分池导致的随机性）
     const sync = alice.connection.last('stateSync')!;
     const acting = sync.snapshot.actingPlayerId === alice.joined.playerId ? alice : bob;
     const waiting = acting === alice ? bob : alice;
+    const rng = vi.spyOn(Math, 'random').mockReturnValue(0.5);
     manager.handleMessage(acting.connection, { type: 'action', action: { type: 'all-in' } });
     const call = alice.connection.last('stateSync')!.snapshot.legalActions
       .find((action) => action.type === 'call')!;
     manager.handleMessage(waiting.connection, { type: 'action', action: call });
+    rng.mockRestore();
     expect(alice.connection.last('handResult')).toBeDefined();
 
     // 下一手自动开始时只剩 1 人有筹码，房间回到大厅
@@ -235,5 +238,61 @@ describe('room hand flow', () => {
     manager.handleMessage(alice.connection, { type: 'startGame' });
     expect(alice.connection.last('error')?.code).toBe('bad-message');
     expect(alice.connection.last('roomState')!.room.phase).toBe('lobby');
+  });
+
+  it('runs out and settles a hand where both blinds are all-in', () => {
+    const manager = createManager();
+    const alice = createRoom(manager);
+    const bob = joinRoom(manager, alice.joined.roomCode, 'Bob');
+
+    // 篡改座位筹码，构造双盲即全押的极端局面
+    const room = (manager as unknown as { rooms: Map<string, { players: { id: string; stack: number }[] }> })
+      .rooms.get(alice.joined.roomCode)!;
+    room.players.find((player) => player.id === alice.joined.playerId)!.stack = 20;
+    room.players.find((player) => player.id === bob.joined.playerId)!.stack = 40;
+
+    // 固定洗牌结果，保证这手牌分出胜负（输家清零）
+    const rng = vi.spyOn(Math, 'random').mockReturnValue(0.5);
+    manager.handleMessage(alice.connection, { type: 'startGame' });
+    rng.mockRestore();
+
+    // heads-up 小盲即庄家；引擎直接跑完结算时快照没有庄家，从盲注事件找回
+    expect(alice.connection.last('handStart')!.dealerPlayerId).toBe(alice.joined.playerId);
+    expect(alice.connection.last('yourHand')!.cards).toHaveLength(2);
+
+    const sync = alice.connection.last('stateSync')!;
+    expect(sync.snapshot.street).toBe('settled');
+    expect(sync.snapshot.communityCards).toHaveLength(5);
+
+    expect(alice.connection.last('showdown')!.reveals).toHaveLength(2);
+    const result = alice.connection.last('handResult')!;
+    expect(bob.connection.last('handResult')).toEqual(result);
+    expect(result.payouts.reduce((sum, payout) => sum + payout.amount, 0)).toBe(60);
+    expect(alice.connection.last('error')).toBeUndefined();
+    expect(bob.connection.last('error')).toBeUndefined();
+
+    // 输家清零，下一手自动开始时只剩 1 人有筹码，回到大厅
+    vi.advanceTimersByTime(150);
+    expect(alice.connection.last('roomState')!.room.phase).toBe('lobby');
+  });
+
+  it('falls back to the lobby instead of crashing when the engine fails to start a hand', () => {
+    const manager = createManager();
+    const alice = createRoom(manager);
+    joinRoom(manager, alice.joined.roomCode, 'Bob');
+
+    const spy = vi.spyOn(PokerEngine, 'createWithPlayers').mockImplementation(() => {
+      throw new Error('boom');
+    });
+    const errorLog = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+
+    manager.handleMessage(alice.connection, { type: 'startGame' });
+
+    expect(errorLog).toHaveBeenCalled();
+    expect(alice.connection.last('roomState')!.room.phase).toBe('lobby');
+    expect(alice.connection.last('handStart')).toBeUndefined();
+
+    spy.mockRestore();
+    errorLog.mockRestore();
   });
 });
