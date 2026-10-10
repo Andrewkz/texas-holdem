@@ -104,6 +104,7 @@ export class RoomManager {
           playerId: player.id,
           room: room.roomState(),
         });
+        room.resendHandState(player);
         return;
       }
       case 'leaveRoom': {

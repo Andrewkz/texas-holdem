@@ -45,6 +45,7 @@ export class Room {
   private handNumber = 0;
   private actionTimer: ReturnType<typeof setTimeout> | null = null;
   private betweenHandsTimer: ReturnType<typeof setTimeout> | null = null;
+  private readonly reconnectTimers = new Map<string, ReturnType<typeof setTimeout>>();
 
   public constructor(
     public readonly code: string,
@@ -94,6 +95,12 @@ export class Room {
       return null;
     }
 
+    const timer = this.reconnectTimers.get(player.id);
+    if (timer) {
+      clearTimeout(timer);
+      this.reconnectTimers.delete(player.id);
+    }
+
     player.connected = true;
     player.connection = connection;
     this.broadcastRoomState();
@@ -110,22 +117,52 @@ export class Room {
     player.connected = false;
     player.connection = null;
     this.broadcastRoomState();
+
+    const timer = setTimeout(() => {
+      this.reconnectTimers.delete(playerId);
+      if (!player.connected) {
+        this.removePlayer(playerId);
+      }
+    }, this.options.reconnectWindowMs);
+    this.reconnectTimers.set(playerId, timer);
   }
 
   public removePlayer(playerId: string): void {
-    const index = this.players.findIndex((candidate) => candidate.id === playerId);
+    const player = this.players.find((candidate) => candidate.id === playerId);
 
-    if (index === -1) {
+    if (!player) {
       return;
     }
 
-    this.players.splice(index, 1);
+    const timer = this.reconnectTimers.get(playerId);
+    if (timer) {
+      clearTimeout(timer);
+      this.reconnectTimers.delete(playerId);
+    }
+
+    const inHand = this.phase === 'playing'
+      && this.engine !== null
+      && this.engine.snapshot().players.some((candidate) => candidate.id === playerId)
+      && this.engine.snapshot().street !== 'settled';
+
+    if (inHand) {
+      player.autoFold = true;
+      player.connected = false;
+      player.connection = null;
+
+      const snapshot = this.engine!.snapshot();
+      if (snapshot.actingPlayerId === playerId && snapshot.legalActions.length > 0) {
+        this.applyAction(playerId, { type: 'fold' });
+      }
+    } else {
+      this.players.splice(this.players.indexOf(player), 1);
+    }
 
     if (this.hostId === playerId) {
       this.hostId = this.seatedPlayers()[0]?.id ?? '';
     }
 
-    if (this.players.length === 0) {
+    if (this.seatedPlayers().length === 0) {
       this.clearActionTimer();
       if (this.betweenHandsTimer) {
         clearTimeout(this.betweenHandsTimer);
@@ -327,11 +364,41 @@ export class Room {
       return;
     }
 
-    this.broadcast({ type: 'stateSync', snapshot: { ...this.engine.snapshot(), handId: this.handNumber } });
+    const snapshot = { ...this.engine.snapshot(), handId: this.handNumber };
+    this.broadcast({ type: 'stateSync', snapshot });
+
+    const acting = snapshot.actingPlayerId
+      ? this.players.find((candidate) => candidate.id === snapshot.actingPlayerId)
+      : null;
+
+    if (acting?.autoFold === true && snapshot.legalActions.length > 0) {
+      this.applyAction(acting.id, { type: 'fold' });
+    }
   }
 
   protected scheduleActionTimeout(): void {
-    // Task 6 实现行动超时；此处先占位，Task 6 替换。
+    this.clearActionTimer();
+
+    const actingPlayerId = this.phase === 'playing' ? this.engine?.snapshot().actingPlayerId : null;
+    if (!actingPlayerId) {
+      return;
+    }
+
+    this.actionTimer = setTimeout(() => {
+      this.actionTimer = null;
+      const snapshot = this.engine?.snapshot();
+
+      if (!snapshot || snapshot.street === 'settled' || snapshot.actingPlayerId !== actingPlayerId) {
+        return;
+      }
+
+      const passive = snapshot.legalActions.find((action) => action.type === 'check')
+        ?? snapshot.legalActions.find((action) => action.type === 'fold');
+
+      if (passive) {
+        this.applyAction(actingPlayerId, passive);
+      }
+    }, this.options.actionTimeoutMs);
   }
 
   protected clearActionTimer(): void {
@@ -341,8 +408,36 @@ export class Room {
     }
   }
 
+  public resendHandState(player: RoomPlayer): void {
+    if (!this.engine || this.phase !== 'playing') {
+      return;
+    }
+
+    const snapshot = { ...this.engine.snapshot(), handId: this.handNumber };
+
+    // 两手之间（已结算）只补公共快照：此时没有庄家/底牌，新手牌马上开始
+    if (snapshot.street === 'settled') {
+      this.sendTo(player, { type: 'stateSync', snapshot });
+      return;
+    }
+
+    if (snapshot.players.some((candidate) => candidate.id === player.id)) {
+      this.sendTo(player, { type: 'handStart', handId: snapshot.handId, dealerPlayerId: snapshot.dealerPlayerId! });
+      this.sendTo(player, { type: 'yourHand', handId: snapshot.handId, cards: this.engine.getHoleCards(player.id) });
+    }
+
+    this.sendTo(player, { type: 'stateSync', snapshot });
+  }
+
   private finishHand(): void {
     this.clearActionTimer();
+
+    // autoFold 弃牌嵌套在 broadcastStateSync 里时 finishHand 会被内外各调一次，
+    // 清掉旧的两手之间计时器，避免下一手被开两次
+    if (this.betweenHandsTimer) {
+      clearTimeout(this.betweenHandsTimer);
+      this.betweenHandsTimer = null;
+    }
 
     for (const playerState of this.engine!.snapshot().players) {
       const player = this.players.find((candidate) => candidate.id === playerState.id);
@@ -354,7 +449,27 @@ export class Room {
     this.broadcastRoomState();
     this.betweenHandsTimer = setTimeout(() => {
       this.betweenHandsTimer = null;
+      this.dropAutoFoldedPlayers();
       this.startHand();
     }, this.options.betweenHandsMs);
+  }
+
+  private dropAutoFoldedPlayers(): void {
+    for (const player of [...this.players]) {
+      if (player.autoFold) {
+        this.players.splice(this.players.indexOf(player), 1);
+      }
+    }
+
+    if (this.hostId && !this.seatedPlayers().some((player) => player.id === this.hostId)) {
+      this.hostId = this.seatedPlayers()[0]?.id ?? '';
+    }
+
+    if (this.players.length === 0) {
+      this.onEmpty();
+      return;
+    }
+
+    this.broadcastRoomState();
   }
 }
