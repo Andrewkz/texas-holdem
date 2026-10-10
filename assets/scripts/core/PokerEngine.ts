@@ -55,6 +55,10 @@ export class PokerEngine {
       throw new Error('Need between 2 and 6 players');
     }
 
+    if (new Set(players.map((player) => player.id)).size !== players.length) {
+      throw new Error('Duplicate player id');
+    }
+
     return new PokerEngine(
       options,
       players.map((player) => createPlayer(player.id, player.name, options.stacks?.[player.id])),

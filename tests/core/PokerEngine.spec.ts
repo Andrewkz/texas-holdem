@@ -145,4 +145,24 @@ describe('createWithPlayers', () => {
     expect(state.players.find(({ id }) => id === 'c')).toMatchObject({ streetContribution: 40 });
     expect(state.actingPlayerId).toBe('a');
   });
+
+  it('rejects duplicate player ids', () => {
+    expect(() => PokerEngine.createWithPlayers(
+      [{ id: 'a', name: 'A' }, { id: 'a', name: 'A2' }],
+    )).toThrow('Duplicate player id');
+  });
+
+  it('lets the big blind act first on the flop in heads-up play', () => {
+    const game = PokerEngine.createWithPlayers(two, { random: () => 0.5 });
+    game.startHand();
+
+    game.act({ type: 'call', amount: 20 });
+    expect(game.snapshot().actingPlayerId).toBe('b');
+    game.act({ type: 'check' });
+
+    const flop = game.snapshot();
+    expect(flop.street).toBe('flop');
+    expect(flop.actingPlayerId).toBe('b');
+    expect(flop.dealerPlayerId).toBe('a');
+  });
 });
