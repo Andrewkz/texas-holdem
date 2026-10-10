@@ -1207,7 +1207,8 @@ describe('room hand flow', () => {
 
     const result = alice.connection.last('handResult')!;
     const totalPayout = result.payouts.reduce((sum, payout) => sum + payout.amount, 0);
-    expect(totalPayout).toBe(60);
+    // heads-up：SB(庄家) 20 + BB 40 + SB 翻牌前跟注补齐 20 = 80
+    expect(totalPayout).toBe(80);
 
     vi.advanceTimersByTime(150);
     expect(alice.connection.last('handStart')!.handId).toBe(2);
@@ -1730,7 +1731,7 @@ Expected: FAIL — 超时无自动行动；重连无 `handStart` 补发；断线
       return;
     }
 
-    const snapshot = this.engine.snapshot();
+    const snapshot = { ...this.engine.snapshot(), handId: this.handNumber };
     this.broadcast({ type: 'stateSync', snapshot });
 
     const acting = snapshot.actingPlayerId
@@ -1742,6 +1743,8 @@ Expected: FAIL — 超时无自动行动；重连无 `handStart` 补发；断线
     }
   }
 ```
+
+（注意：引擎每手重建，其内部 `handId` 恒为 1，必须用房间自己的 `handNumber` 覆盖——Task 5 已实现该计数器。）
 
 7. `finishHand` 中 `setTimeout` 回调替换为（清出 autoFold 玩家再开下一手）：
 
