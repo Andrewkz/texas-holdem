@@ -217,13 +217,14 @@ describe('room hand flow', () => {
 
   it('refuses to start when fewer than two seated players have chips', () => {
     const manager = createManager();
+    // 洗牌发生在 startGame 里，必须在开牌前固定随机数，保证 all-in 对决分出胜负（不分池）
+    const rng = vi.spyOn(Math, 'random').mockReturnValue(0.5);
     const { alice, bob } = startTwoPlayerGame(manager);
 
-    // 全押对决，输家清零（固定洗牌结果避免分池导致的随机性）
+    // 全押对决，输家清零
     const sync = alice.connection.last('stateSync')!;
     const acting = sync.snapshot.actingPlayerId === alice.joined.playerId ? alice : bob;
     const waiting = acting === alice ? bob : alice;
-    const rng = vi.spyOn(Math, 'random').mockReturnValue(0.5);
     manager.handleMessage(acting.connection, { type: 'action', action: { type: 'all-in' } });
     const call = alice.connection.last('stateSync')!.snapshot.legalActions
       .find((action) => action.type === 'call')!;
