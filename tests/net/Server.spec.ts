@@ -116,6 +116,13 @@ describe('websocket server', () => {
     });
     expect(error.code).toBe('bad-message');
 
+    // 坏消息不杀死会话：随后仍能正常建房
+    const client = await TestClient.connect(port);
+    client.send({ type: 'createRoom', nickname: 'Carol' });
+    const joined = await client.waitFor('joined');
+    expect(joined.roomCode).toMatch(/^[A-Z2-9]{4}$/);
+
     raw.close();
+    client.close();
   });
 });
