@@ -1,8 +1,9 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { PlayerAction } from '../../assets/scripts/core/types';
+import { Room } from '../../server/src/Room';
 import { RoomManager } from '../../server/src/RoomManager';
-import { connect, createRoom, joinRoom } from './fakes';
+import { connect, createRoom, FakeConnection, joinRoom } from './fakes';
 
 const OPTIONS = { actionTimeoutMs: 1_000, reconnectWindowMs: 2_000, betweenHandsMs: 10_000 };
 
@@ -133,5 +134,102 @@ describe('room lifecycle', () => {
     expect(handStarts.map((message) => message.handId)).toEqual([1, 2]);
     expect(alice.connection.last('roomState')!.room.seats.map((seat) => seat.playerId))
       .toEqual([alice.joined.playerId, dave.joined.playerId]);
+  });
+
+  it('rejects reconnect with a stale token after the seat is removed', () => {
+    // 同楼上：行动超时必须长于重连窗口，避免 Alice 先被超时弃牌
+    const { manager, alice, bob } = startTwoPlayerGame({ actionTimeoutMs: 60_000 });
+    manager.handleClose(bob.connection);
+    vi.advanceTimersByTime(OPTIONS.reconnectWindowMs + 50);
+
+    expect(alice.connection.last('roomState')!.room.seats).toHaveLength(1);
+
+    const back = connect(manager);
+    manager.handleMessage(back, { type: 'reconnect', roomCode: alice.joined.roomCode, token: bob.joined.token });
+
+    expect(back.last('joined')).toBeUndefined();
+    expect(back.last('error')?.code).toBe('room-not-found');
+  });
+
+  it('skips a departed non-dealer when rotating the dealer', () => {
+    const manager = new RoomManager({ actionTimeoutMs: 10_000, reconnectWindowMs: 10_000, betweenHandsMs: 100 });
+    const alice = createRoom(manager);
+    const bob = joinRoom(manager, alice.joined.roomCode, 'Bob');
+    const carol = joinRoom(manager, alice.joined.roomCode, 'Carol');
+    manager.handleMessage(alice.connection, { type: 'startGame' });
+    const byId = { [alice.joined.playerId]: alice, [bob.joined.playerId]: bob, [carol.joined.playerId]: carol };
+
+    expect(alice.connection.last('handStart')!.dealerPlayerId).toBe(alice.joined.playerId);
+
+    // 3 人局翻牌前庄家先行动：前两家弃牌，第三家收池，快速结束手牌
+    for (let folds = 0; folds < 2; folds += 1) {
+      const sync = alice.connection.last('stateSync')!;
+      const acting = byId[sync.snapshot.actingPlayerId!];
+      manager.handleMessage(acting.connection, { type: 'action', action: { type: 'fold' } });
+    }
+    expect(alice.connection.last('stateSync')!.snapshot.street).toBe('settled');
+
+    // Bob（非庄家）在两手之间离开，庄家按钮从 Alice 顺延到 Carol
+    manager.handleMessage(bob.connection, { type: 'leaveRoom' });
+    vi.advanceTimersByTime(150);
+
+    expect(alice.connection.last('handStart')!.dealerPlayerId).toBe(carol.joined.playerId);
+  });
+
+  it('rotates the dealer to the next seat when the dealer themselves depart', () => {
+    const manager = new RoomManager({ actionTimeoutMs: 10_000, reconnectWindowMs: 10_000, betweenHandsMs: 100 });
+    const alice = createRoom(manager);
+    const bob = joinRoom(manager, alice.joined.roomCode, 'Bob');
+    const carol = joinRoom(manager, alice.joined.roomCode, 'Carol');
+    manager.handleMessage(alice.connection, { type: 'startGame' });
+    const byId = { [alice.joined.playerId]: alice, [bob.joined.playerId]: bob, [carol.joined.playerId]: carol };
+
+    expect(alice.connection.last('handStart')!.dealerPlayerId).toBe(alice.joined.playerId);
+
+    // 第一手：前两家弃牌收池，开第二手（庄家轮到 Bob）
+    for (let folds = 0; folds < 2; folds += 1) {
+      const sync = alice.connection.last('stateSync')!;
+      manager.handleMessage(byId[sync.snapshot.actingPlayerId!].connection, { type: 'action', action: { type: 'fold' } });
+    }
+    vi.advanceTimersByTime(150);
+    expect(alice.connection.last('handStart')!.dealerPlayerId).toBe(bob.joined.playerId);
+
+    // 第二手同样快速收池
+    for (let folds = 0; folds < 2; folds += 1) {
+      const sync = alice.connection.last('stateSync')!;
+      manager.handleMessage(byId[sync.snapshot.actingPlayerId!].connection, { type: 'action', action: { type: 'fold' } });
+    }
+    expect(alice.connection.last('stateSync')!.snapshot.street).toBe('settled');
+
+    // 庄家 Bob 本人在两手之间离开：第三手庄家应是 Bob 的下一位 Carol，而不是回退到座位 0 的 Alice
+    manager.handleMessage(bob.connection, { type: 'leaveRoom' });
+    expect(alice.connection.last('roomState')!.room.seats.map((seat) => seat.playerId))
+      .toEqual([alice.joined.playerId, carol.joined.playerId]);
+
+    vi.advanceTimersByTime(150);
+    expect(alice.connection.last('handStart')!.dealerPlayerId).toBe(carol.joined.playerId);
+  });
+
+  it('recovers the dealer from blinds when a two-stack hand settles instantly with extra seated players', () => {
+    // 三人入座但只有两人有筹码时走 heads-up 盲注结构（小盲即庄家）：
+    // 盲注全押开局即结算，快照不含庄家，必须从 blind-posted 事件找回——
+    // 即便座位数大于 2。否则庄家会被错记成 0 筹码的座位 0 玩家。
+    const room = new Room('TEST', { actionTimeoutMs: 10_000, reconnectWindowMs: 10_000, betweenHandsMs: 60_000 }, () => {});
+    const connection = new FakeConnection();
+    const alice = room.addPlayer('Alice', connection);
+    const bob = room.addPlayer('Bob', new FakeConnection());
+    const carol = room.addPlayer('Carol', new FakeConnection());
+    if (!alice.ok || !bob.ok || !carol.ok) {
+      throw new Error('expected joins to succeed');
+    }
+    alice.player.stack = 0;
+    bob.player.stack = 20;
+    carol.player.stack = 40;
+
+    room.startGame(alice.player.id);
+
+    const handStart = connection.last('handStart')!;
+    expect(handStart.dealerPlayerId).toBe(bob.player.id);
+    expect(connection.last('stateSync')!.snapshot.street).toBe('settled');
   });
 });

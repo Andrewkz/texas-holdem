@@ -42,6 +42,7 @@ export class Room {
   private nextPlayerNumber = 1;
   private engine: PokerEngine | null = null;
   private lastDealerPlayerId: string | null = null;
+  private lastDealerSeatIndex = -1;
   private handNumber = 0;
   private actionTimer: ReturnType<typeof setTimeout> | null = null;
   private betweenHandsTimer: ReturnType<typeof setTimeout> | null = null;
@@ -91,7 +92,8 @@ export class Room {
   public reconnectPlayer(token: string, connection: ClientConnection): RoomPlayer | null {
     const player = this.players.find((candidate) => candidate.token === token) ?? null;
 
-    if (!player) {
+    // autoFold 幽灵的座位已移除（等手牌结束清出名单），token 不再可用，客户端应重新 joinRoom
+    if (!player || player.autoFold) {
       return null;
     }
 
@@ -110,7 +112,7 @@ export class Room {
   public markDisconnected(playerId: string): void {
     const player = this.players.find((candidate) => candidate.id === playerId);
 
-    if (!player) {
+    if (!player || player.autoFold) {
       return;
     }
 
@@ -253,10 +255,16 @@ export class Room {
     }
 
     this.phase = 'playing';
-    // 按玩家 id 追踪庄家，避免有人离座后数组下标漂移导致轮转错位
-    const initialDealerIndex = this.lastDealerPlayerId
-      ? seated.findIndex((player) => player.id === this.lastDealerPlayerId)
-      : -1;
+    // 按玩家 id 追踪庄家，避免有人离座后数组下标漂移导致轮转错位；
+    // 庄家本人离席（id 找不到）时，其继任者在 splice 后的新数组中下标恰好前移一位，
+    // 传"原座位号 - 1"让引擎的 nextPlayingIndex 落到正确的下一位
+    let initialDealerIndex = -1;
+    if (this.lastDealerPlayerId) {
+      const byId = seated.findIndex((player) => player.id === this.lastDealerPlayerId);
+      initialDealerIndex = byId !== -1
+        ? byId
+        : (this.lastDealerSeatIndex > 0 ? this.lastDealerSeatIndex - 1 : -1);
+    }
 
     let snapshot: EngineSnapshot;
     try {
@@ -277,16 +285,28 @@ export class Room {
       return;
     }
 
-    // 双盲全押等情形下引擎在开局内直接结算，此时快照不含庄家；
-    // 该情形只可能出现在 heads-up（小盲即庄家），从盲注事件找回庄家 id
+    // 双盲全押等情形下引擎在开局内直接结算，此时快照不含庄家。
+    // 开局即结算只可能在仅剩两名有筹码玩家时发生（但凡还有第三家持有筹码，
+    // 他未下盲注便必然有待行动），此时走 heads-up 盲注结构、小盲即庄家，
+    // 从盲注事件找回庄家 id；其余（不可达的）多人直结保持上次庄家不变
     const settledEvents = snapshot.street === 'settled' ? this.engine.takeEvents() : [];
+    const playingCount = seated.filter((player) => player.stack > 0).length;
+    const recoveredDealerId = playingCount === 2
+      ? settledEvents.find((event) => event.type === 'blind-posted')?.playerId
+      : undefined;
     const dealerPlayerId = snapshot.dealerPlayerId
-      ?? settledEvents.find((event) => event.type === 'blind-posted')?.playerId
+      ?? recoveredDealerId
+      ?? this.lastDealerPlayerId
       ?? seated[0].id;
-    this.lastDealerPlayerId = dealerPlayerId;
     // 引擎每手重建、handId 归零，房间里自行累计手牌序号
     this.handNumber += 1;
     this.broadcast({ type: 'handStart', handId: this.handNumber, dealerPlayerId });
+
+    const dealerSeatIndex = seated.findIndex((player) => player.id === dealerPlayerId);
+    if (dealerSeatIndex !== -1) {
+      this.lastDealerPlayerId = dealerPlayerId;
+      this.lastDealerSeatIndex = dealerSeatIndex;
+    }
 
     for (const player of seated) {
       this.sendTo(player, { type: 'yourHand', handId: this.handNumber, cards: this.engine.getHoleCards(player.id) });
@@ -450,6 +470,10 @@ export class Room {
     this.betweenHandsTimer = setTimeout(() => {
       this.betweenHandsTimer = null;
       this.dropAutoFoldedPlayers();
+      // dropAutoFoldedPlayers 可能已清空房间并触发 onEmpty，不要再碰引擎
+      if (this.players.length === 0) {
+        return;
+      }
       this.startHand();
     }, this.options.betweenHandsMs);
   }
@@ -457,6 +481,11 @@ export class Room {
   private dropAutoFoldedPlayers(): void {
     for (const player of [...this.players]) {
       if (player.autoFold) {
+        const timer = this.reconnectTimers.get(player.id);
+        if (timer) {
+          clearTimeout(timer);
+          this.reconnectTimers.delete(player.id);
+        }
         this.players.splice(this.players.indexOf(player), 1);
       }
     }
