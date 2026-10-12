@@ -24,13 +24,33 @@ export class NetClient {
   ) {}
 
   public connect(): Promise<void> {
+    if (this.socket) {
+      return Promise.reject(new Error('已连接或正在连接'));
+    }
+
     return new Promise((resolve, reject) => {
       const socket = this.factory(this.url);
       this.socket = socket;
+      let settled = false;
 
-      socket.onopen = () => resolve();
-      socket.onerror = () => reject(new Error(`无法连接服务器 ${this.url}`));
+      socket.onopen = () => {
+        if (this.socket !== socket || settled) {
+          return;
+        }
+        settled = true;
+        resolve();
+      };
+      socket.onerror = () => {
+        if (this.socket !== socket || settled) {
+          return;
+        }
+        settled = true;
+        reject(new Error(`无法连接服务器 ${this.url}`));
+      };
       socket.onmessage = (event) => {
+        if (this.socket !== socket) {
+          return;
+        }
         try {
           const message = JSON.parse(String(event.data)) as ServerMessage;
           this.onMessage?.(message);
@@ -39,7 +59,13 @@ export class NetClient {
         }
       };
       socket.onclose = () => {
-        this.socket = null;
+        if (this.socket === socket) {
+          this.socket = null;
+        }
+        if (!settled) {
+          settled = true;
+          reject(new Error('连接已关闭'));
+        }
         this.onClose?.();
       };
     });
