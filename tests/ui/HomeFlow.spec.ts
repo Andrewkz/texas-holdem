@@ -43,4 +43,22 @@ describe('home flow', () => {
     expect(reduceHomeFlow(confirming, { type: 'confirm-return' })).toEqual(createHomeFlow());
     expect(reduceHomeFlow(playing, { type: 'request-return', confirmReset: false })).toEqual(createHomeFlow());
   });
+
+  it('enters the online setup from home and returns', () => {
+    const home = createHomeFlow();
+    const setup = reduceHomeFlow(home, { type: 'open-online' });
+
+    expect(setup.screen).toBe('online-setup');
+    expect(reduceHomeFlow(setup, { type: 'close-online' })).toEqual(home);
+  });
+
+  it('moves from setup to lobby and from lobby into the game', () => {
+    const setup = reduceHomeFlow(createHomeFlow(), { type: 'open-online' });
+    const lobby = reduceHomeFlow(setup, { type: 'entered-lobby' });
+
+    expect(lobby.screen).toBe('online-lobby');
+    expect(reduceHomeFlow(lobby, { type: 'leave-lobby' })).toEqual(createHomeFlow());
+    expect(reduceHomeFlow(lobby, { type: 'online-game-start' }))
+      .toEqual({ screen: 'playing', sessionActive: true });
+  });
 });

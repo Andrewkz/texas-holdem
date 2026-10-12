@@ -1,4 +1,4 @@
-export type HomeScreen = 'home' | 'rules' | 'settings' | 'starting' | 'playing' | 'return-confirmation';
+export type HomeScreen = 'home' | 'rules' | 'settings' | 'online-setup' | 'online-lobby' | 'starting' | 'playing' | 'return-confirmation';
 
 export interface HomeFlowState {
   screen: HomeScreen;
@@ -13,7 +13,12 @@ export type HomeFlowEvent =
   | { type: 'complete-start' }
   | { type: 'request-return'; confirmReset: boolean }
   | { type: 'cancel-return' }
-  | { type: 'confirm-return' };
+  | { type: 'confirm-return' }
+  | { type: 'open-online' }
+  | { type: 'close-online' }
+  | { type: 'entered-lobby' }
+  | { type: 'leave-lobby' }
+  | { type: 'online-game-start' };
 
 export function createHomeFlow(): HomeFlowState {
   return { screen: 'home', sessionActive: false };
@@ -30,10 +35,31 @@ export function reduceHomeFlow(state: HomeFlowState, event: HomeFlowEvent): Home
     if (event.type === 'request-start') {
       return { screen: 'starting', sessionActive: false };
     }
+    if (event.type === 'open-online') {
+      return { screen: 'online-setup', sessionActive: false };
+    }
   }
 
   if ((state.screen === 'rules' || state.screen === 'settings') && event.type === 'close-modal') {
     return createHomeFlow();
+  }
+
+  if (state.screen === 'online-setup') {
+    if (event.type === 'close-online') {
+      return createHomeFlow();
+    }
+    if (event.type === 'entered-lobby') {
+      return { screen: 'online-lobby', sessionActive: false };
+    }
+  }
+
+  if (state.screen === 'online-lobby') {
+    if (event.type === 'leave-lobby') {
+      return createHomeFlow();
+    }
+    if (event.type === 'online-game-start') {
+      return { screen: 'playing', sessionActive: true };
+    }
   }
 
   if (state.screen === 'starting') {
