@@ -18,6 +18,10 @@ import {
 import { chooseAiAction } from '../ai/AiController';
 import { PokerEngine } from '../core/PokerEngine';
 import { Card, EngineEvent, EngineSnapshot, PlayerAction, Street } from '../core/types';
+import { NetClient } from '../net/NetClient';
+import { clearOnlineCredentials, loadOnlineCredentials, resolveServerUrl, saveOnlineCredentials } from '../net/OnlineCredentials';
+import { OnlineSession, TableUpdate } from '../net/OnlineSession';
+import { RoomStateMessage } from '../net/protocol';
 import {
   getActionButtonSpecs,
   getPokerSeatLayout,
@@ -105,6 +109,20 @@ export class GameBootstrap extends Component {
   private selectedRaiseTo = 0;
   private busy = false;
   private winnerId: string | null = null;
+  private onlineLayer!: Node;
+  private onlinePanel!: Node;
+  private onlineNicknameInput!: EditBox;
+  private onlineServerInput!: EditBox;
+  private onlineRoomCodeInput!: EditBox;
+  private onlineStatusLabel!: Label;
+  private lobbyLayer!: Node;
+  private lobbyCodeLabel!: Label;
+  private lobbySeatLabels: Label[] = [];
+  private lobbyStartButton!: Node;
+  private lobbyStatusLabel!: Label;
+  private online: OnlineSession | null = null;
+  private onlineClient: NetClient | null = null;
+  private onlinePlayerId = '';
 
   public onLoad(): void {
     view.setDesignResolutionSize(1280, 720, 4);
@@ -113,6 +131,10 @@ export class GameBootstrap extends Component {
     void this.audio.preload().catch(() => undefined);
     this.buildTable();
     this.buildHome();
+    this.buildOnlineSetup();
+    this.buildLobby();
+    this.onlineLayer.active = false;
+    this.lobbyLayer.active = false;
     this.tableLayer.active = false;
     this.renderHome();
   }
@@ -349,10 +371,11 @@ export class GameBootstrap extends Component {
     this.createLabel(hero, 'POKER CLUB', 0, 142, 38, GOLD);
     this.createLabel(hero, '六人德州扑克 · 虚拟筹码', 0, 98, 17, rgb(185, 211, 229));
     this.createLabel(hero, '♠  ♥  ♣  ♦', 0, 54, 24, TEXT);
-    this.createTextButton(hero, 'home-start', '开始游戏', 0, -12, 320, rgb(28, 132, 92), () => this.requestStart(), 52);
-    this.createTextButton(hero, 'home-rules', '游戏规则', -88, -86, 156, rgb(47, 95, 142), () => this.openHomeModal('rules'), 42);
-    this.createTextButton(hero, 'home-settings', '设置', 88, -86, 156, rgb(151, 91, 37), () => this.openHomeModal('settings'), 42);
-    this.createLabel(hero, '20 / 40 盲注 · 随机 AI 对手', 0, -152, 13, rgb(139, 166, 190));
+    this.createTextButton(hero, 'home-start', '单机游戏', 0, -12, 320, rgb(28, 132, 92), () => this.requestStart(), 52);
+    this.createTextButton(hero, 'home-online', '联机对战', 0, -86, 320, rgb(47, 95, 142), () => this.openOnlineSetup(), 42);
+    this.createTextButton(hero, 'home-rules', '游戏规则', -88, -140, 156, rgb(47, 95, 142), () => this.openHomeModal('rules'), 42);
+    this.createTextButton(hero, 'home-settings', '设置', 88, -140, 156, rgb(151, 91, 37), () => this.openHomeModal('settings'), 42);
+    this.createLabel(hero, '20 / 40 盲注 · 随机 AI 对手', 0, -192, 13, rgb(139, 166, 190));
 
     this.rulesPanel = this.createRulesModal();
     this.settingsPanel = this.createSettingsModal();
@@ -411,6 +434,56 @@ export class GameBootstrap extends Component {
     return layer;
   }
 
+  private buildOnlineSetup(): void {
+    this.onlineLayer = this.createModalLayer('online-layer');
+    this.onlinePanel = this.createRounded('online-panel', this.onlineLayer, 0, 0, 620, 470, POKER_UI.radii.panel, PANEL_RAISED, GOLD, 1);
+    this.createLabel(this.onlinePanel, '联机对战', 0, 190, 25, GOLD);
+
+    this.createLabel(this.onlinePanel, '昵称', -238, 138, 15, TEXT);
+    this.onlineNicknameInput = this.createInput(this.onlinePanel, 'online-nickname', 42, 138, 360, '输入昵称（1-12 字）');
+    this.createLabel(this.onlinePanel, '服务器', -238, 82, 15, TEXT);
+    this.onlineServerInput = this.createInput(this.onlinePanel, 'online-server', 42, 82, 360, 'ws:// 或 wss:// 地址');
+    this.createLabel(this.onlinePanel, '房间码', -238, 26, 15, TEXT);
+    this.onlineRoomCodeInput = this.createInput(this.onlinePanel, 'online-room-code', 42, 26, 360, '加入时填写 4 位房间码');
+
+    this.onlineStatusLabel = this.createLabel(this.onlinePanel, '', 0, -26, 14, rgb(228, 120, 120));
+    this.createTextButton(this.onlinePanel, 'online-create', '创建房间', -130, -88, 200, rgb(28, 132, 92), () => void this.connectOnline('create'), 44);
+    this.createTextButton(this.onlinePanel, 'online-join', '加入房间', 130, -88, 200, rgb(47, 95, 142), () => void this.connectOnline('join'), 44);
+    this.createTextButton(this.onlinePanel, 'online-back', '返回', 0, -172, 180, rgb(117, 61, 70), () => this.closeOnlineSetup(), 42);
+  }
+
+  private createInput(parent: Node, name: string, x: number, y: number, width: number, placeholder: string): EditBox {
+    const frame = this.createRounded(name, parent, x, y, width, 38, 8, rgb(14, 31, 52));
+    const inputNode = new Node(`${name}-control`);
+    inputNode.parent = frame;
+    inputNode.addComponent(UITransform).setContentSize(width, 38);
+    const inputLabel = this.createLabel(inputNode, '', 0, 0, 16, TEXT);
+    const input = inputNode.addComponent(EditBox);
+    input.inputMode = EditBox.InputMode.ANY;
+    input.placeholder = placeholder;
+    input.textLabel = inputLabel;
+    return input;
+  }
+
+  private buildLobby(): void {
+    this.lobbyLayer = new Node('lobby-layer');
+    this.node.addChild(this.lobbyLayer);
+    this.lobbyLayer.addComponent(UITransform).setContentSize(POKER_UI.canvas.width, POKER_UI.canvas.height);
+    this.createRounded('lobby-background', this.lobbyLayer, 0, 0, POKER_UI.canvas.width, POKER_UI.canvas.height, 0, BACKGROUND);
+    const panel = this.createRounded('lobby-panel', this.lobbyLayer, 0, 0, 620, 480, POKER_UI.radii.panel, PANEL_RAISED, GOLD, 1);
+    this.createLabel(panel, '房间大厅', 0, 196, 25, GOLD);
+    this.lobbyCodeLabel = this.createLabel(panel, '房间码 ----', 0, 152, 22, TEXT);
+
+    for (let index = 0; index < 6; index += 1) {
+      const row = this.createRounded(`lobby-seat-${index}`, panel, 0, 100 - index * 40, 440, 32, 8, rgb(25, 66, 76));
+      this.lobbySeatLabels.push(this.createLabel(row, '空位', 0, 0, 15, TEXT));
+    }
+
+    this.lobbyStatusLabel = this.createLabel(panel, '', 0, -148, 14, rgb(139, 166, 190));
+    this.lobbyStartButton = this.createTextButton(panel, 'lobby-start', '开始游戏', -110, -196, 200, rgb(28, 132, 92), () => this.online?.sendStartGame(), 44);
+    this.createTextButton(panel, 'lobby-leave', '离开房间', 110, -196, 200, rgb(117, 61, 70), () => this.leaveOnline(), 44);
+  }
+
   private createReturnHomeControl(): void {
     this.createTextButton(this.tableLayer, 'return-home', '返回首页', 528, 323, 104, rgb(117, 61, 70), () => this.requestReturn(), 36);
 
@@ -460,12 +533,125 @@ export class GameBootstrap extends Component {
     this.renderHome();
   }
 
+  private openOnlineSetup(): void {
+    this.flow = reduceHomeFlow(this.flow, { type: 'open-online' });
+    const stored = loadOnlineCredentials(sys.localStorage);
+    this.onlineNicknameInput.string = stored?.nickname ?? '';
+    this.onlineServerInput.string = resolveServerUrl(sys.localStorage, sys.isBrowser ? window.location.search : '');
+    this.onlineRoomCodeInput.string = stored?.roomCode ?? '';
+    this.onlineStatusLabel.string = '';
+    this.renderHome();
+  }
+
+  private closeOnlineSetup(): void {
+    this.flow = reduceHomeFlow(this.flow, { type: 'close-online' });
+    this.renderHome();
+  }
+
+  private async connectOnline(mode: 'create' | 'join'): Promise<void> {
+    const nickname = this.onlineNicknameInput.string.trim();
+    const serverUrl = this.onlineServerInput.string.trim();
+    const roomCode = this.onlineRoomCodeInput.string.trim().toUpperCase();
+
+    if (!nickname) {
+      this.onlineStatusLabel.string = '请填写昵称';
+      return;
+    }
+
+    if (!serverUrl) {
+      this.onlineStatusLabel.string = '请填写服务器地址';
+      return;
+    }
+
+    if (mode === 'join' && !roomCode) {
+      this.onlineStatusLabel.string = '请填写房间码';
+      return;
+    }
+
+    this.onlineStatusLabel.string = '正在连接服务器…';
+    const client = new NetClient(serverUrl);
+
+    client.onMessage = (message) => {
+      if (message.type === 'joined') {
+        this.onlinePlayerId = message.playerId;
+        saveOnlineCredentials(sys.localStorage, { roomCode: message.roomCode, token: message.token, nickname, serverUrl });
+        this.onlineClient = client;
+        this.online = new OnlineSession(client, {
+          playerId: message.playerId,
+          credentials: { roomCode: message.roomCode, token: message.token, nickname, serverUrl },
+          handlers: {
+            onTableUpdate: (update) => this.applyTableUpdate(update),
+            onRoomState: (room) => this.renderLobby(room),
+            onSessionLost: (text) => this.handleSessionLost(text),
+          },
+        });
+        this.flow = reduceHomeFlow(this.flow, { type: 'entered-lobby' });
+        this.renderLobby(message.room);
+        this.renderHome();
+      } else if (message.type === 'error') {
+        this.onlineStatusLabel.string = message.message;
+      }
+    };
+    client.onClose = () => {
+      if (this.flow.screen === 'online-setup') {
+        this.onlineStatusLabel.string = '连接已断开';
+      }
+    };
+
+    try {
+      await client.connect();
+    } catch {
+      this.onlineStatusLabel.string = '无法连接服务器（若刚部署，可能在冷启动，请稍候重试）';
+      return;
+    }
+
+    client.send(mode === 'create' ? { type: 'createRoom', nickname } : { type: 'joinRoom', roomCode, nickname });
+  }
+
+  private renderLobby(room: RoomStateMessage): void {
+    this.lobbyCodeLabel.string = `房间码 ${room.code}`;
+
+    for (let index = 0; index < this.lobbySeatLabels.length; index += 1) {
+      const seat = room.seats[index];
+      this.lobbySeatLabels[index].string = seat
+        ? `${seat.nickname}${seat.playerId === room.hostId ? ' · 房主' : ''}${seat.connected ? '' : ' · 离线'}`
+        : '空位';
+    }
+
+    const isHost = room.hostId === this.onlinePlayerId;
+    this.lobbyStartButton.active = isHost && room.phase === 'lobby';
+    this.lobbyStatusLabel.string = room.phase === 'playing'
+      ? '牌局进行中…'
+      : isHost ? '至少 2 人即可开始' : '等待房主开始…';
+  }
+
+  private leaveOnline(): void {
+    this.online?.sendLeave();
+    this.online = null;
+    this.onlineClient = null;
+    clearOnlineCredentials(sys.localStorage);
+    this.flow = reduceHomeFlow(this.flow, { type: 'leave-lobby' });
+    this.renderHome();
+  }
+
+  private applyTableUpdate(update: TableUpdate): Promise<void> {
+    // Task 13 实现牌桌接线
+    void update;
+    return Promise.resolve();
+  }
+
+  private handleSessionLost(text: string): void {
+    this.lobbyStatusLabel.string = text;
+  }
+
   private renderHome(): void {
     this.rulesPanel.active = this.flow.screen === 'rules';
     this.settingsPanel.active = this.flow.screen === 'settings';
     this.settingsSoundLabel.string = `音效 · ${this.settings.soundEnabled ? '开启' : '关闭'}`;
     this.settingsSpeedLabel.string = `动画速度 · ${this.settings.animationSpeed}×`;
     this.settingsConfirmLabel.string = `返回确认 · ${this.settings.confirmReset ? '开启' : '关闭'}`;
+    this.onlineLayer.active = this.flow.screen === 'online-setup';
+    this.lobbyLayer.active = this.flow.screen === 'online-lobby';
   }
 
   private updateSettings(patch: Partial<GameSettings>): void {
