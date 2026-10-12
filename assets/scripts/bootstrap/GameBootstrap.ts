@@ -17,7 +17,7 @@ import {
 
 import { chooseAiAction } from '../ai/AiController';
 import { PokerEngine } from '../core/PokerEngine';
-import { Card, EngineEvent, PlayerAction, PlayerSnapshot, Street } from '../core/types';
+import { Card, EngineEvent, EngineSnapshot, PlayerAction, Street } from '../core/types';
 import {
   getActionButtonSpecs,
   getPokerSeatLayout,
@@ -46,6 +46,7 @@ interface CardVisual {
 interface SeatVisual {
   id: string;
   node: Node;
+  name: Label;
   chips: Label;
   action: Label;
   dealer: Label;
@@ -202,7 +203,7 @@ export class GameBootstrap extends Component {
       } else {
         this.drawAiAvatar(avatar, this.aiAvatars.get(id)!);
       }
-      this.createLabel(node, name, 8, 16, 15, TEXT);
+      const nameLabel = this.createLabel(node, name, 8, 16, 15, TEXT);
       const chips = this.createLabel(node, '5,000', 8, -5, 14, rgb(183, 244, 216));
       const action = this.createLabel(node, '', 8, -27, 12, GOLD);
       const dealer = this.createLabel(node, '', 66, 20, 11, GOLD);
@@ -212,7 +213,7 @@ export class GameBootstrap extends Component {
         this.createCard(this.tableLayer, new Vec3(x + 29, cardY, 0)),
       ];
       cards.forEach((card) => card.node.active = false);
-      this.seats.set(id, { id, node, chips, action, dealer, highlight, cards, position: new Vec3(x, y, 0), nextCard: 0 });
+      this.seats.set(id, { id, node, name: nameLabel, chips, action, dealer, highlight, cards, position: new Vec3(x, y, 0), nextCard: 0 });
     }
   }
 
@@ -542,7 +543,7 @@ export class GameBootstrap extends Component {
       return;
     }
     this.busy = false;
-    this.render();
+    this.render(this.engine.snapshot());
     await this.runAiTurns(token);
   }
 
@@ -559,7 +560,7 @@ export class GameBootstrap extends Component {
       return;
     }
     this.busy = false;
-    this.render();
+    this.render(this.engine.snapshot());
     await this.runAiTurns(token);
   }
 
@@ -572,7 +573,7 @@ export class GameBootstrap extends Component {
       const toCall = legalActions.find((action) => action.type === 'call')?.amount ?? 0;
       this.busy = true;
       this.setSeatAction(actorId, '思考中…');
-      this.render();
+      this.render(this.engine.snapshot());
       await this.wait(0.55 + Math.random() * 0.35);
       if (!this.sessions.isCurrent(token)) {
         return;
@@ -593,7 +594,7 @@ export class GameBootstrap extends Component {
         return;
       }
       this.busy = false;
-      this.render();
+      this.render(this.engine.snapshot());
     }
 
     if (this.sessions.isCurrent(token) && this.engine.snapshot().street === 'settled') {
@@ -634,7 +635,7 @@ export class GameBootstrap extends Component {
       } else if (event.type === 'pot-awarded') {
         this.audio.play('settlement');
         this.highlightWinner(event.playerId);
-        this.resultLabel.string = `${this.seats.get(event.playerId)!.id === 'player' ? '你' : 'AI'} 赢得 ${event.amount} · ${event.handName}`;
+        this.resultLabel.string = `${this.seats.get(event.playerId)!.name.string} 赢得 ${event.amount} · ${event.handName}`;
         this.resultLabel.node.active = true;
         await this.animateChip(new Vec3(0, 62, 0), this.seats.get(event.playerId)!.position, token);
       }
@@ -670,8 +671,7 @@ export class GameBootstrap extends Component {
     await this.move(target.node, target.home, 0.2);
   }
 
-  private render(): void {
-    const state = this.engine.snapshot();
+  private render(state: EngineSnapshot): void {
     this.potLabel.string = `底池 ${state.pot.toLocaleString()}`;
     this.streetLabel.string = `盲注 20 / 40 · ${streetText(state.street)}`;
 
@@ -683,7 +683,7 @@ export class GameBootstrap extends Component {
       seat.node.scale = this.winnerId === player.id
         ? new Vec3(POKER_SHOWDOWN_FEEDBACK.winnerScale, POKER_SHOWDOWN_FEEDBACK.winnerScale, 1)
         : state.actingPlayerId === player.id ? new Vec3(1.08, 1.08, 1) : Vec3.ONE;
-      seat.dealer.string = player.id === state.players[0].id ? 'D' : player.streetContribution === 20 ? 'SB' : player.streetContribution === 40 ? 'BB' : '';
+      seat.dealer.string = player.id === state.dealerPlayerId ? 'D' : player.streetContribution === 20 ? 'SB' : player.streetContribution === 40 ? 'BB' : '';
     }
 
     this.renderActionButtons(state.actingPlayerId === 'player' && !this.busy ? state.legalActions : []);
@@ -729,7 +729,7 @@ export class GameBootstrap extends Component {
   }
 
   private closeRaisePanel(): void {
-    this.hideRaisePanel(() => this.render());
+    this.hideRaisePanel(() => this.render(this.engine.snapshot()));
   }
 
   private hideRaisePanel(afterClose?: () => void): void {
