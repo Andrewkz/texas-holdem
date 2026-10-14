@@ -26,6 +26,32 @@ pnpm test
 
 自动测试覆盖牌堆、七选五牌型评估（含 A-5 顺子与同牌桌平分）、盲注和轮转、弃牌结算、短码全压、边池构造及 AI 合法动作。
 
+## 联机对战
+
+`server/` 是权威联机服务器（Node + ws）：建房、发牌、行动校验与结算都在服务端执行，手牌只发给本人。
+
+本地运行：
+
+```bash
+pnpm install
+cd server && pnpm install   # 生成 server/pnpm-lock.yaml（首次）
+cd ..
+pnpm --dir server dev       # 默认监听 ws://localhost:2567
+```
+
+客户端连接：首页 → 联机对战 → 填写昵称、服务器地址（本地开发填 `ws://localhost:2567`）→ 创建或加入房间。也可以用 URL 参数指定服务器，如 `?server=ws://localhost:2567`（优先级高于页面填写与本地存储）。
+
+部署（Render 免费档）：
+
+1. 推送本仓库后，在 Render 新建 Web Service，Root Directory 填 `server`。
+2. Build Command：`pnpm install`；Start Command：`pnpm start`。
+3. 部署后得到 `wss://<服务名>.onrender.com`，客户端服务器地址填它（GitHub Pages 的 HTTPS 页面只能用 `wss://`）。
+4. 免费档空闲约 15 分钟休眠，首个连接冷启动约 30–60 秒，客户端会提示稍后重试。
+
+游客制：昵称即身份，令牌保存在浏览器 localStorage 用于断线重连（60 秒窗口）；房间不持久化，服务器重启即清空。行动超时 30 秒自动过牌/弃牌。
+
+联机相关测试在 `tests/net/`（协议校验、房间大厅、完整牌局、断线重连与超时、真实 WebSocket 集成）；服务器代码用 `pnpm run typecheck:server` 检查。
+
 ## GitHub Pages
 
 `site/` 保存经过验证的 Cocos Web Desktop 静态包。推送 `main` 后，`.github/workflows/pages.yml` 会将该目录部署到 GitHub Pages：
@@ -40,5 +66,7 @@ https://andrewkz.github.io/texas-holdem/
 
 - `assets/scripts/core`：牌堆、牌型比较、边池及下注状态机。
 - `assets/scripts/ai`：五名 AI 的合法行动策略。
-- `assets/scripts/bootstrap/GameBootstrap.ts`：桌面横屏 UI、交互和动画。
+- `assets/scripts/bootstrap/GameBootstrap.ts`：桌面横屏 UI、交互和动画，以及联机入口与牌桌接线。
+- `assets/scripts/net`：协议类型、WebSocket 客户端（NetClient）、联机会话（OnlineSession）与凭证存取。
+- `server/`：联机服务器（房间管理 + 权威牌局裁决）。
 - `assets/scenes/Game.scene`：挂载 `GameBootstrap` 的运行场景。
