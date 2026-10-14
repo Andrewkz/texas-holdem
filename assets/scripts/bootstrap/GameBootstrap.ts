@@ -123,6 +123,9 @@ export class GameBootstrap extends Component {
   private online: OnlineSession | null = null;
   private onlineClient: NetClient | null = null;
   private onlinePlayerId = '';
+  private mode: 'solo' | 'online' = 'solo';
+  private onlineSnapshot: EngineSnapshot | null = null;
+  private connectingOnline = false;
 
   public onLoad(): void {
     view.setDesignResolutionSize(1280, 720, 4);
@@ -515,6 +518,9 @@ export class GameBootstrap extends Component {
         this.homeLayer.active = false;
         this.homeOpacity.opacity = 255;
         this.tableLayer.active = true;
+        this.mode = 'solo';
+        this.onlineSnapshot = null;
+        this.restoreSoloSeats();
         this.engine = PokerEngine.createSixSeat();
         this.activeSessionToken = this.sessions.begin();
         this.flow = reduceHomeFlow(this.flow, { type: 'complete-start' });
@@ -568,11 +574,21 @@ export class GameBootstrap extends Component {
       return;
     }
 
+    if (this.connectingOnline) {
+      return;
+    }
+    this.connectingOnline = true;
+
     this.onlineStatusLabel.string = '正在连接服务器…';
     const client = new NetClient(serverUrl);
 
     client.onMessage = (message) => {
       if (message.type === 'joined') {
+        if (this.flow.screen !== 'online-setup') {
+          client.close();
+          return;
+        }
+        this.connectingOnline = false;
         this.onlinePlayerId = message.playerId;
         saveOnlineCredentials(sys.localStorage, { roomCode: message.roomCode, token: message.token, nickname, serverUrl });
         this.onlineClient = client;
@@ -593,14 +609,17 @@ export class GameBootstrap extends Component {
       }
     };
     client.onClose = () => {
-      if (this.flow.screen === 'online-setup') {
+      if (this.flow.screen === 'online-setup' && this.connectingOnline) {
+        this.connectingOnline = false;
         this.onlineStatusLabel.string = '连接已断开';
       }
     };
 
     try {
       await client.connect();
+      this.connectingOnline = false;
     } catch {
+      this.connectingOnline = false;
       this.onlineStatusLabel.string = '无法连接服务器（若刚部署，可能在冷启动，请稍候重试）';
       return;
     }
@@ -623,6 +642,10 @@ export class GameBootstrap extends Component {
     this.lobbyStatusLabel.string = room.phase === 'playing'
       ? '牌局进行中…'
       : isHost ? '至少 2 人即可开始' : '等待房主开始…';
+
+    if (this.mode === 'online' && this.flow.screen === 'playing') {
+      this.applyOnlineSeats();
+    }
   }
 
   private leaveOnline(): void {
@@ -635,12 +658,79 @@ export class GameBootstrap extends Component {
   }
 
   private applyTableUpdate(update: TableUpdate): Promise<void> {
-    // Task 13 实现牌桌接线
-    void update;
-    return Promise.resolve();
+    return this.runTableUpdate(update);
+  }
+
+  private async runTableUpdate(update: TableUpdate): Promise<void> {
+    if (this.flow.screen === 'online-lobby' || this.flow.screen === 'online-setup') {
+      this.enterOnlineTable();
+    }
+
+    if (this.flow.screen !== 'playing' || this.mode !== 'online') {
+      return;
+    }
+
+    const token = this.activeSessionToken;
+
+    if (update.newHand) {
+      this.resetVisuals();
+    }
+
+    this.busy = true;
+    await this.playEvents(update.events, token);
+
+    if (!this.sessions.isCurrent(token)) {
+      return;
+    }
+
+    if (update.snapshot) {
+      this.onlineSnapshot = update.snapshot;
+    }
+
+    this.busy = false;
+
+    if (this.onlineSnapshot) {
+      this.render(this.onlineSnapshot);
+    }
+  }
+
+  private enterOnlineTable(): void {
+    this.mode = 'online';
+    this.flow = reduceHomeFlow(this.flow, { type: 'online-game-start' });
+    this.homeLayer.active = false;
+    this.lobbyLayer.active = false;
+    this.tableLayer.active = true;
+    this.activeSessionToken = this.sessions.begin();
+    this.applyOnlineSeats();
+    this.resetVisuals();
+  }
+
+  private applyOnlineSeats(): void {
+    const names = this.online?.seatNames() ?? new Map<string, string>();
+
+    this.seats.forEach((seat, id) => {
+      const name = names.get(id);
+      seat.node.active = name !== undefined;
+      if (name !== undefined) {
+        seat.name.string = name;
+      }
+    });
+  }
+
+  private restoreSoloSeats(): void {
+    for (const { id, name } of getPokerSeatLayout()) {
+      const seat = this.seats.get(id)!;
+      seat.node.active = true;
+      seat.name.string = name;
+    }
   }
 
   private handleSessionLost(text: string): void {
+    if (this.flow.screen === 'playing') {
+      this.completeReturnHome();
+      return;
+    }
+
     this.lobbyStatusLabel.string = text;
   }
 
@@ -701,6 +791,15 @@ export class GameBootstrap extends Component {
     this.tableLayer.active = false;
     this.homeLayer.active = true;
     this.homeOpacity.opacity = 255;
+    if (this.mode === 'online') {
+      this.online?.sendLeave();
+      this.online = null;
+      this.onlineClient = null;
+      clearOnlineCredentials(sys.localStorage);
+    }
+    this.mode = 'solo';
+    this.onlineSnapshot = null;
+    this.restoreSoloSeats();
     this.engine = PokerEngine.createSixSeat();
     this.flow = createHomeFlow();
     this.renderHome();
@@ -735,7 +834,13 @@ export class GameBootstrap extends Component {
 
   private async handlePlayerAction(action: PlayerAction): Promise<void> {
     const token = this.activeSessionToken;
-    if (this.busy || !this.sessions.isCurrent(token) || this.engine.snapshot().actingPlayerId !== 'player') {
+    if (this.busy || !this.sessions.isCurrent(token) || this.currentSnapshot().actingPlayerId !== 'player') {
+      return;
+    }
+
+    if (this.mode === 'online') {
+      this.online?.sendAction(action);
+      this.renderActionButtons([]);
       return;
     }
 
@@ -915,7 +1020,7 @@ export class GameBootstrap extends Component {
   }
 
   private closeRaisePanel(): void {
-    this.hideRaisePanel(() => this.render(this.engine.snapshot()));
+    this.hideRaisePanel(() => this.render(this.currentSnapshot()));
   }
 
   private hideRaisePanel(afterClose?: () => void): void {
@@ -959,8 +1064,16 @@ export class GameBootstrap extends Component {
     this.raiseInput.string = String(this.selectedRaiseTo);
   }
 
+  private currentSnapshot(): EngineSnapshot {
+    if (this.mode === 'online' && this.onlineSnapshot) {
+      return this.onlineSnapshot;
+    }
+
+    return this.engine.snapshot();
+  }
+
   private getRaiseBounds(): RaiseBounds {
-    const state = this.engine.snapshot();
+    const state = this.currentSnapshot();
     const player = state.players.find(({ id }) => id === 'player')!;
     const minimum = state.legalActions.find((action) => action.type === 'raise');
 
