@@ -3,13 +3,13 @@
   <head>
     <meta charset="utf-8">
 
-    <title>Cocos Creator | Texas Holdem</title>
+    <title>Cocos Creator | texas-holdem</title>
 
     <meta name="viewport" content="width=device-width,user-scalable=no,initial-scale=1,minimum-scale=1,maximum-scale=1,minimal-ui=true"/>
     <meta name="apple-mobile-web-app-capable" content="yes"/>
     <meta name="mobile-web-app-capable" content="yes"/>
     <meta name="full-screen" content="yes"/>
-    <meta name="screen-orientation" content="landscape"/>
+    <meta name="screen-orientation" content="portrait"/>
     <meta name="x5-fullscreen" content="true"/>
     <meta name="360-fullscreen" content="true"/>
 
@@ -21,14 +21,19 @@
     <link rel="icon" href="favicon.ico"/>
   </head>
   <body>
-    <div id="GameDiv" cc_exact_fit_screen="false">
+    <h1 class="header">texas-holdem</h1>
+
+    <div id="GameDiv" cc_exact_fit_screen="false" style="width: 1280px; height: 960px;">
       <div id="Cocos3dGameContainer">
-        <canvas id="GameCanvas" width="1280" height="720" tabindex="99" aria-label="Texas Hold'em game"></canvas>
+        <canvas id="GameCanvas" width="1280" height="960" tabindex="99"></canvas>
       </div>
     </div>
+    <p class="footer">
+      Created with <a href="https://www.cocos.com/products" title="Cocos Creator">Cocos Creator</a>
+    </p>
     <!-- Polyfills bundle. -->
 
-<script src="src/polyfills.bundle.js" charset="utf-8"> </script>
+<script src="src/polyfills.bundle.js" charset="utf-8"> </script>    
 
 
 <!-- SystemJS support. -->
