@@ -605,6 +605,7 @@ export class GameBootstrap extends Component {
         this.renderLobby(message.room);
         this.renderHome();
       } else if (message.type === 'error') {
+        this.connectingOnline = false;
         this.onlineStatusLabel.string = message.message;
       }
     };
@@ -617,7 +618,6 @@ export class GameBootstrap extends Component {
 
     try {
       await client.connect();
-      this.connectingOnline = false;
     } catch {
       this.connectingOnline = false;
       this.onlineStatusLabel.string = '无法连接服务器（若刚部署，可能在冷启动，请稍候重试）';
@@ -662,11 +662,12 @@ export class GameBootstrap extends Component {
   }
 
   private async runTableUpdate(update: TableUpdate): Promise<void> {
-    if (this.flow.screen === 'online-lobby' || this.flow.screen === 'online-setup') {
+    if (this.flow.screen === 'online-lobby') {
       this.enterOnlineTable();
     }
 
-    if (this.flow.screen !== 'playing' || this.mode !== 'online') {
+    const inGame = this.flow.screen === 'playing' || this.flow.screen === 'return-confirmation';
+    if (!inGame || this.mode !== 'online') {
       return;
     }
 
@@ -726,7 +727,7 @@ export class GameBootstrap extends Component {
   }
 
   private handleSessionLost(text: string): void {
-    if (this.flow.screen === 'playing') {
+    if (this.flow.screen === 'playing' || this.flow.screen === 'return-confirmation') {
       this.completeReturnHome();
       return;
     }
@@ -1092,6 +1093,12 @@ export class GameBootstrap extends Component {
   }
 
   private async confirmRaise(): Promise<void> {
+    // 联机模式下等待加注面板期间，服务器可能已超时自动弃牌/结算，快照不再合法
+    if (this.mode === 'online' && this.currentSnapshot().actingPlayerId !== 'player') {
+      this.hideRaisePanel();
+      return;
+    }
+
     const to = normalizeRaiseTo(Number(this.raiseInput.string), this.getRaiseBounds());
     this.hideRaisePanel();
     await this.handlePlayerAction({ type: 'raise', to });
