@@ -121,7 +121,7 @@ export class GameBootstrap extends Component {
   private lobbyStartButton!: Node;
   private lobbyStatusLabel!: Label;
   private online: OnlineSession | null = null;
-  private onlineClient: NetClient | null = null;
+  private pendingClient: NetClient | null = null;
   private onlinePlayerId = '';
   private mode: 'solo' | 'online' = 'solo';
   private onlineSnapshot: EngineSnapshot | null = null;
@@ -550,6 +550,12 @@ export class GameBootstrap extends Component {
   }
 
   private closeOnlineSetup(): void {
+    // 连接进行中点返回：中止在途连接，避免幽灵会话与 connectingOnline 卡死
+    if (this.connectingOnline && this.pendingClient) {
+      this.pendingClient.close();
+      this.connectingOnline = false;
+      this.pendingClient = null;
+    }
     this.flow = reduceHomeFlow(this.flow, { type: 'close-online' });
     this.renderHome();
   }
@@ -581,17 +587,20 @@ export class GameBootstrap extends Component {
 
     this.onlineStatusLabel.string = '正在连接服务器…';
     const client = new NetClient(serverUrl);
+    this.pendingClient = client;
 
     client.onMessage = (message) => {
       if (message.type === 'joined') {
         if (this.flow.screen !== 'online-setup') {
+          this.connectingOnline = false;
+          this.pendingClient = null;
           client.close();
           return;
         }
         this.connectingOnline = false;
+        this.pendingClient = null;
         this.onlinePlayerId = message.playerId;
         saveOnlineCredentials(sys.localStorage, { roomCode: message.roomCode, token: message.token, nickname, serverUrl });
-        this.onlineClient = client;
         this.online = new OnlineSession(client, {
           playerId: message.playerId,
           credentials: { roomCode: message.roomCode, token: message.token, nickname, serverUrl },
@@ -599,8 +608,10 @@ export class GameBootstrap extends Component {
             onTableUpdate: (update) => this.applyTableUpdate(update),
             onRoomState: (room) => this.renderLobby(room),
             onSessionLost: (text) => this.handleSessionLost(text),
+            onError: (text) => this.handleOnlineError(text),
           },
         });
+        this.online.primeRoom(message.room);
         this.flow = reduceHomeFlow(this.flow, { type: 'entered-lobby' });
         this.renderLobby(message.room);
         this.renderHome();
@@ -620,11 +631,27 @@ export class GameBootstrap extends Component {
       await client.connect();
     } catch {
       this.connectingOnline = false;
+      this.pendingClient = null;
       this.onlineStatusLabel.string = '无法连接服务器（若刚部署，可能在冷启动，请稍候重试）';
       return;
     }
 
+    if (this.flow.screen !== 'online-setup') {
+      client.close();
+      this.connectingOnline = false;
+      this.pendingClient = null;
+      return;
+    }
+
     client.send(mode === 'create' ? { type: 'createRoom', nickname } : { type: 'joinRoom', roomCode, nickname });
+  }
+
+  private handleOnlineError(text: string): void {
+    if (this.flow.screen === 'online-lobby') {
+      this.lobbyStatusLabel.string = text;
+    } else if (this.flow.screen === 'online-setup') {
+      this.onlineStatusLabel.string = text;
+    }
   }
 
   private renderLobby(room: RoomStateMessage): void {
@@ -651,7 +678,6 @@ export class GameBootstrap extends Component {
   private leaveOnline(): void {
     this.online?.sendLeave();
     this.online = null;
-    this.onlineClient = null;
     clearOnlineCredentials(sys.localStorage);
     this.flow = reduceHomeFlow(this.flow, { type: 'leave-lobby' });
     this.renderHome();
@@ -795,7 +821,6 @@ export class GameBootstrap extends Component {
     if (this.mode === 'online') {
       this.online?.sendLeave();
       this.online = null;
-      this.onlineClient = null;
       clearOnlineCredentials(sys.localStorage);
     }
     this.mode = 'solo';

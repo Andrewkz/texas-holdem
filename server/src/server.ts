@@ -4,12 +4,21 @@ import { parseClientMessage } from '../../assets/scripts/net/protocol';
 import type { ServerMessage } from '../../assets/scripts/net/protocol';
 import { RoomManager } from './RoomManager';
 
-export function createWsServer(manager: RoomManager, port: number): WebSocketServer {
+type TrackedSocket = WebSocket & { isAlive?: boolean };
+
+export function createWsServer(manager: RoomManager, port: number, heartbeatMs = 30_000): WebSocketServer {
   const wss = new WebSocketServer({ port, maxPayload: 16 * 1024 });
 
   wss.on('connection', (socket: WebSocket) => {
+    const tracked = socket as TrackedSocket;
+    tracked.isAlive = true;
+    socket.on('pong', () => {
+      tracked.isAlive = true;
+    });
+
     const connection = {
       send: (message: ServerMessage) => socket.send(JSON.stringify(message)),
+      close: () => socket.close(),
     };
     manager.handleOpen(connection);
 
@@ -45,6 +54,24 @@ export function createWsServer(manager: RoomManager, port: number): WebSocketSer
 
     socket.on('close', () => manager.handleClose(connection));
   });
+
+  // 心跳：静默断开的半开连接（NAT 断线等）不会触发 close，用 ping/pong 兜底 terminate
+  if (heartbeatMs > 0) {
+    const interval = setInterval(() => {
+      for (const socket of wss.clients) {
+        const tracked = socket as TrackedSocket;
+
+        if (tracked.isAlive === false) {
+          tracked.terminate();
+          continue;
+        }
+
+        tracked.isAlive = false;
+        tracked.ping();
+      }
+    }, heartbeatMs);
+    wss.on('close', () => clearInterval(interval));
+  }
 
   return wss;
 }

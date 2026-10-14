@@ -150,6 +150,15 @@ export class OnlineSession {
         });
         return;
       case 'error':
+        // 座位被顶号：本会话永久失效
+        if (message.code === 'session-taken-over') {
+          this.awaitingReconnectAck = false;
+          this.reconnecting = false;
+          this.disposed = true;
+          this.handlers.onSessionLost(message.message);
+          this.client.close();
+          return;
+        }
         // 服务器明确拒绝 reconnect（token 失效/房间已销毁/幽灵座位）：会话不可恢复，不再重试
         if (this.awaitingReconnectAck) {
           this.awaitingReconnectAck = false;
@@ -163,7 +172,18 @@ export class OnlineSession {
     }
   }
 
+  public primeRoom(room: RoomStateMessage): void {
+    if (!this.latestRoom) {
+      this.applyRoomMapping(room);
+    }
+  }
+
   private handleRoomState(room: RoomStateMessage): void {
+    this.applyRoomMapping(room);
+    this.handlers.onRoomState(room);
+  }
+
+  private applyRoomMapping(room: RoomStateMessage): void {
     this.latestRoom = room;
     const seatedIds = room.seats.map((seat) => seat.playerId);
     const seatedSet = new Set(seatedIds);
@@ -181,7 +201,6 @@ export class OnlineSession {
       this.visualIds = new Map(
         ordered.slice(0, slots.length).map((serverId, index) => [serverId, slots[index]] as const),
       );
-      this.handlers.onRoomState(room);
       return;
     }
 
@@ -225,7 +244,6 @@ export class OnlineSession {
     }
 
     this.visualIds = next;
-    this.handlers.onRoomState(room);
   }
 
   private handleHandStart(handId: number): void {
@@ -319,7 +337,8 @@ export class OnlineSession {
     this.reconnecting = true;
 
     for (let attempt = 0; attempt < this.maxReconnectAttempts; attempt += 1) {
-      await new Promise((resolve) => setTimeout(resolve, this.reconnectDelayMs));
+      const delay = Math.min(this.reconnectDelayMs * 2 ** attempt, 15_000);
+      await new Promise((resolve) => setTimeout(resolve, delay));
 
       if (this.disposed) {
         this.reconnecting = false;

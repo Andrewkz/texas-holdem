@@ -33,7 +33,8 @@ export type ErrorCode =
   | 'not-in-room'
   | 'game-not-started'
   | 'not-your-turn'
-  | 'illegal-action';
+  | 'illegal-action'
+  | 'session-taken-over';
 
 export type ClientMessage =
   | { type: 'createRoom'; nickname: string }

@@ -331,4 +331,60 @@ describe('OnlineSession', () => {
 
     expect(updates).toHaveLength(0);
   });
+
+  it('applies a primed room so the first handStart maps opponents before any roomState', async () => {
+    const { client, session, updates, rooms } = createSession();
+
+    session.primeRoom(ROOM);
+    expect(session.seatNames().size).toBe(3);
+    expect(rooms).toEqual([]);
+
+    client.emit({ type: 'handStart', handId: 1, dealerPlayerId: 'p1' });
+    client.emit({ type: 'stateSync', snapshot: snapshot({}) });
+    await session.whenIdle();
+
+    expect(updates).toHaveLength(1);
+    const dealt = updates[0].events.filter((event) => event.type === 'hole-card-dealt');
+    expect(dealt).toHaveLength(4);
+    expect(dealt.every((event) => event.faceDown && event.playerId !== 'player')).toBe(true);
+  });
+
+  it('backs off exponentially and reports session loss after exhausting attempts', async () => {
+    const client = new FakeClient();
+    client.connect = () => {
+      client.connectCalls += 1;
+      return Promise.reject(new Error('nope'));
+    };
+    const lost: string[] = [];
+    void new OnlineSession(client as never, {
+      playerId: 'p2',
+      credentials: { roomCode: 'ABCD', token: 'tok', nickname: 'Bob', serverUrl: 'ws://x' },
+      handlers: {
+        onTableUpdate: () => Promise.resolve(),
+        onRoomState: () => undefined,
+        onSessionLost: (message) => lost.push(message),
+      },
+      reconnectDelayMs: 1,
+      maxReconnectAttempts: 3,
+    });
+
+    client.onClose?.();
+    await new Promise((resolve) => setTimeout(resolve, 50));
+
+    expect(client.connectCalls).toBe(3);
+    expect(lost).toEqual(['与服务器断开连接，请重新加入房间']);
+  });
+
+  it('ends the session without reconnecting when the seat is taken over', async () => {
+    const { client, lost, errors } = createSession();
+
+    client.emit({ type: 'error', code: 'session-taken-over', message: '该座位已在别处登录' });
+
+    expect(lost).toEqual(['该座位已在别处登录']);
+    expect(errors).toEqual([]);
+
+    client.onClose?.();
+    await new Promise((resolve) => setTimeout(resolve, 30));
+    expect(client.connectCalls).toBe(0);
+  });
 });

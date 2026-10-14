@@ -167,6 +167,17 @@ describe('room hand flow', () => {
     expect(total).toBe(10000);
     expect(alice.connection.last('error')).toBeUndefined();
     expect(bob.connection.last('error')).toBeUndefined();
+
+    // 跑码结算顺序：带 5 张公共牌的 stateSync 必须先于 showdown，showdown 先于 handResult
+    const types = alice.connection.sent.map((message) => message.type);
+    const runoutSyncIndex = alice.connection.sent.findIndex(
+      (message) => message.type === 'stateSync' && message.snapshot.communityCards.length === 5,
+    );
+    const showdownIndex = types.indexOf('showdown');
+    const resultIndex = types.indexOf('handResult');
+    expect(runoutSyncIndex).toBeGreaterThan(-1);
+    expect(showdownIndex).toBeGreaterThan(runoutSyncIndex);
+    expect(resultIndex).toBeGreaterThan(showdownIndex);
   });
 
   it('keeps the dealer rotation on the remaining players when someone leaves between hands', () => {

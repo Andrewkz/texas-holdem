@@ -139,6 +139,9 @@ describe('room lobby', () => {
     manager.handleMessage(back, { type: 'reconnect', roomCode: alice.joined.roomCode, token: bob.joined.token });
     expect(back.last('joined')?.playerId).toBe(bob.joined.playerId);
 
+    // 顶号：旧连接收到 session-taken-over 并被关闭，不再静默悬挂
+    expect(bob.connection.last('error')?.code).toBe('session-taken-over');
+
     manager.handleClose(bob.connection);
     expect(alice.connection.last('roomState')?.room.seats[1].connected).toBe(true);
   });

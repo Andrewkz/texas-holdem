@@ -103,6 +103,13 @@ export class Room {
       this.reconnectTimers.delete(player.id);
     }
 
+    // 顶号：旧连接（如另一个标签页）明确告知后关闭，避免两侧互相顶号死循环
+    const previous = player.connection;
+    if (previous && previous !== connection) {
+      previous.send({ type: 'error', code: 'session-taken-over', message: '该座位已在别处登录' });
+      previous.close?.();
+    }
+
     player.connected = true;
     player.connection = connection;
     this.broadcastRoomState();
@@ -368,9 +375,11 @@ export class Room {
       }
     }
 
-    this.broadcastSettlementEvents(events);
-
+    // stateSync 先于结算广播：客户端靠它 diff 出公共牌翻开事件，
+    // all-in 跑码（单次 act 内结算）时牌面必须先于摊牌/派彩出现
     this.broadcastStateSync();
+
+    this.broadcastSettlementEvents(events);
 
     if (this.engine!.snapshot().street === 'settled') {
       this.finishHand();
