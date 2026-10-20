@@ -54,10 +54,10 @@ function evaluateFive(cards: Card[]): HandValue {
     counts.set(rank, (counts.get(rank) ?? 0) + 1);
   }
 
-  const groups = [...counts.entries()]
+  const groups = Array.from(counts.entries())
     .map(([rank, count]) => ({ rank, count }))
     .sort((left, right) => right.count - left.count || right.rank - left.rank);
-  const straightHigh = findStraightHigh([...counts.keys()]);
+  const straightHigh = findStraightHigh(Array.from(counts.keys()));
   const flush = cards.every((card) => card.suit === cards[0].suit);
 
   if (flush && straightHigh !== null) {

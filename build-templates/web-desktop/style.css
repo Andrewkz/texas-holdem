@@ -1,0 +1,160 @@
+:root {
+  color-scheme: dark;
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-right: env(safe-area-inset-right, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-left: env(safe-area-inset-left, 0px);
+  --page-inset: 24px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  height: 100%;
+  background: #10191d;
+}
+
+body {
+  min-height: 100%;
+  min-height: 100svh;
+  margin: 0;
+  padding: calc(var(--page-inset) + var(--safe-top))
+    calc(var(--page-inset) + var(--safe-right))
+    calc(var(--page-inset) + var(--safe-bottom))
+    calc(var(--page-inset) + var(--safe-left));
+  display: grid;
+  place-items: center;
+  overflow-x: hidden;
+  color: #f2efe7;
+  background: #10191d;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.game-shell {
+  position: relative;
+  width: min(1280px, 100%, calc((100vh - var(--page-inset) * 2 - var(--safe-top) - var(--safe-bottom)) * 1.77777778));
+  width: min(1280px, 100%, calc((100svh - var(--page-inset) * 2 - var(--safe-top) - var(--safe-bottom)) * 1.77777778));
+}
+
+#GameDiv {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  margin: 0 auto;
+  overflow: hidden;
+  border-radius: 20px;
+  background: #10191d;
+  box-shadow: 0 24px 80px #0006, 0 0 0 1px #34474a66;
+}
+
+#Cocos3dGameContainer,
+#GameCanvas {
+  width: 100%;
+  height: 100%;
+}
+
+#GameCanvas {
+  display: block;
+  background: transparent;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  outline: none;
+}
+
+#GameCanvas:focus-visible {
+  outline: 1px solid #34474a;
+  outline-offset: -1px;
+}
+
+/* Preserve native editing and the engine's positioned EditBox inputs. */
+input,
+textarea {
+  font: inherit;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Mobile hosts rotate the complete embedded viewport, including native inputs. */
+body.poker-landscape-host { position: fixed; inset: 0; width: 100%; height: 100%; min-height: 0; padding: 0; display: block; overflow: hidden; overscroll-behavior: none; }
+.poker-landscape-host > .game-shell { display: none; }
+#poker-landscape-frame { position: absolute; top: 0; left: 0; display: block; border: 0; margin: 0; background: #10191d; }
+
+noscript {
+  position: fixed;
+  bottom: 24px;
+  left: 16px;
+  right: 16px;
+  color: #f2efe7;
+  text-align: center;
+}
+
+@media (max-width: 760px), (max-height: 520px) {
+  :root {
+    --page-inset: 10px;
+  }
+
+  #GameDiv {
+    border-radius: 12px;
+  }
+}
+
+/* The game supplies its logical ratio after responsive layout calculation. */
+#GameDiv { aspect-ratio: var(--poker-ratio, 1.77777778); }
+body.keyboard-open { display: block; overflow-y: auto; min-height: 100svh; }
+body.keyboard-open .game-shell { margin: 0 auto 100px; }
+.poker-share-overlay { position: fixed; inset: 0; z-index: 1000; background: #040d1cd9; display: grid; place-items: center; padding: 16px; overflow: auto; }
+.poker-share-panel { width: min(560px, 100%); background: #18272b; color: #f0f9ff; padding: 24px; border: 1px solid #d6b575; border-radius: 18px; font: 16px/1.5 -apple-system, BlinkMacSystemFont, 'PingFang SC', sans-serif; }
+.poker-share-panel h2 { margin: 0; color: #d6b575; font-size: 24px; }
+.poker-share-panel input { display: block; width: 100%; height: 48px; padding: 10px; border: 1px solid #738ca5; border-radius: 8px; background: #10191d; color: #fff; font-size: 16px; user-select: text; }
+.poker-share-panel button { min-height: 44px; padding: 8px 20px; margin: 8px 12px 0 0; border: 0; border-radius: 8px; background: #2e699c; color: white; font: inherit; cursor: pointer; }
+
+body.keyboard-open #GameCanvas { touch-action: pan-y; }
+.poker-keyboard-toolbar { position: absolute; z-index: 2000; display: flex; justify-content: flex-end; pointer-events: none; }
+.poker-keyboard-toolbar button { pointer-events: auto; min-height: 44px; border: 1px solid #91c6dc; border-radius: 10px; background: #18272b; color: #fff; padding: 8px 18px; font: 16px/1.4 -apple-system, BlinkMacSystemFont, 'PingFang SC', sans-serif; box-shadow: 0 4px 20px #0008; touch-action: manipulation; }
+
+/* Session overlays share the private-table palette while retaining native touch controls. */
+.poker-session-overlay { position: fixed; inset: 0; z-index: 1800; display: grid; place-items: center; padding: max(8px, env(safe-area-inset-top)) max(12px, env(safe-area-inset-right)) max(8px, env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-left)); background: #080f12e8; overflow: auto; overscroll-behavior: contain; touch-action: pan-y; }
+.poker-session-panel { box-sizing: border-box; width: min(920px, 100%); max-height: calc(100svh - 24px); overflow: auto; overscroll-behavior: contain; padding: 24px; border: 1px solid #34474A; border-radius: 16px; background: #18272B; color: #F2EFE7; font: 16px/1.5 -apple-system, BlinkMacSystemFont, 'PingFang SC', sans-serif; box-shadow: 0 20px 72px #0008; outline: none; }
+.poker-session-panel h2 { margin: 0 0 6px; color: #F2EFE7; font-size: 24px; font-weight: 600; letter-spacing: .02em; }
+.poker-session-panel p { margin: 6px 0; }
+.session-subtitle { color: #9BAEAC; font-size: 14px; }
+.session-ledger-list { display: grid; gap: 8px; margin: 18px 0 12px; }
+.session-ledger-row { display: grid; grid-template-columns: minmax(130px, 1.3fr) repeat(4, minmax(90px, 1fr)); align-items: center; gap: 0 16px; padding: 12px 16px; border: 1px solid #34474A; border-radius: 8px; background: #10191D; }
+.session-ledger-row h3 { grid-column: 1; grid-row: 1; margin: 0; font-size: 16px; font-weight: 600; overflow-wrap: anywhere; }
+.session-ledger-row .session-row-status { grid-column: 1; grid-row: 2; color: #9BAEAC; font-size: 12px; }
+.session-metric { grid-row: 1 / span 2; text-align: right; font-variant-numeric: tabular-nums; }
+.session-metric span { display: block; color: #9BAEAC; font-size: 12px; }
+.session-metric strong { display: block; color: #F2EFE7; font-size: 16px; font-weight: 500; }
+.session-net strong { color: #D6B575; font-size: 20px; font-weight: 600; }
+.session-ledger-row[data-net="negative"] .session-net strong { color: #D36A68; }
+.session-ledger-row .session-pending { grid-column: 2 / -1; grid-row: 1; color: #D6B575; font-size: 14px; text-align: right; }
+.session-ledger-row[data-pending="true"] .session-metric { grid-column: 2 / -1; grid-row: 2; }
+.session-ledger-row > .session-note { grid-column: 1 / -1; font-size: 13px; }
+.poker-session-panel[data-mode="ended"] .session-ledger-row { grid-template-columns: minmax(130px, 1.3fr) repeat(3, minmax(90px, 1fr)); }
+.poker-session-panel button { box-sizing: border-box; min-height: 44px; padding: 10px 18px; border: 1px solid #34474A; border-radius: 8px; background: #22363A; color: #F2EFE7; font: inherit; cursor: pointer; touch-action: manipulation; transition: background .12s, border-color .12s; }
+.poker-session-panel button[data-action="session-rebuy"], .poker-session-panel button[data-action="session-rebuy-confirm"], .poker-session-panel button[data-action="session-rejoin"], .poker-session-panel button[data-action="session-copy"] { background: #26745A; border-color: #26745A; }
+.poker-session-panel button[data-action="session-end"] { color: #D36A68; }
+.poker-session-panel button[data-action="session-end-confirm"] { background: #D36A68; border-color: #D36A68; color: #10191D; font-weight: 600; }
+.poker-session-panel button:not(:disabled):hover { border-color: #D6B575; }
+.poker-session-panel button:disabled { opacity: .45; cursor: default; }
+.poker-session-panel button:focus-visible, .session-share-link:focus-visible { outline: 2px solid #D6B575; outline-offset: 3px; }
+.session-panel-actions { position: sticky; bottom: -16px; z-index: 1; background: #18272B; display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; padding-top: 12px; border-top: 1px solid #34474A; }
+.session-saved-identities { position: static; }
+.session-panel-actions button[data-action="session-close"] { margin-left: auto; }
+.session-note, .session-total { color: #D6B575; }
+.session-total { padding: 10px 0; border-bottom: 1px solid #34474A; font-size: 16px; font-weight: 600; text-align: right; font-variant-numeric: tabular-nums; }
+.session-error { color: #D36A68; }
+.session-live { min-height: 24px; color: #D6B575; font-size: 14px; }
+.session-share-link { box-sizing: border-box; width: 100%; min-height: 44px; padding: 10px 12px; border: 1px solid #34474A; border-radius: 8px; background: #10191D; color: #F2EFE7; font-size: 16px; }
+@media (max-width: 760px) { .session-ledger-row { grid-template-columns: minmax(100px, 1.15fr) repeat(4, minmax(68px, 1fr)); gap: 0 10px; padding: 10px 12px; } .session-metric strong { font-size: 15px; } .session-net strong { font-size: 18px; } }
+@media (max-height: 480px) { .poker-session-panel { padding: 14px 18px; } .poker-session-panel h2 { font-size: 21px; } .session-ledger-list { margin-top: 10px; gap: 6px; } .session-ledger-row { padding-top: 8px; padding-bottom: 8px; } .session-panel-actions { bottom: -6px; margin-top: 8px; padding-top: 8px; } }
+@media (max-width: 540px) { .poker-session-panel { padding: 18px 14px; } .session-ledger-row, .poker-session-panel[data-mode="ended"] .session-ledger-row { grid-template-columns: minmax(0, 1.3fr) repeat(2, minmax(0, 1fr)); gap: 6px 10px; } .session-ledger-row h3 { grid-column: 1 / 3; } .session-ledger-row .session-row-status { grid-column: 1 / 3; } .session-metric { grid-row: auto; text-align: left; } .session-metric.session-net { grid-column: 3; grid-row: 1 / span 2; text-align: right; } .session-ledger-row .session-pending { grid-column: 3; grid-row: 1 / span 2; } .session-ledger-row[data-pending="true"] .session-metric { grid-column: 1 / -1; grid-row: 3; } .session-panel-actions { bottom: -10px; } .session-panel-actions > button { flex: 1 1 auto; } }
+@media (prefers-reduced-motion: reduce) { .poker-session-panel button { transition: none; } }

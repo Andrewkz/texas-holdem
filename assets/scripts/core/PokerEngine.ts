@@ -1,6 +1,8 @@
+import { assertBlinds, BlindConfig, DEFAULT_BLINDS } from './Blinds';
 import { Deck } from './Deck';
 import { compareHands, evaluateBest, HandCategory, HandValue } from './HandEvaluator';
 import { buildPots } from './SidePot';
+import { CLOCKWISE_SEAT_IDS } from './SeatOrder';
 import { Card, EngineEvent, EngineSnapshot, PlayerAction, PlayerSnapshot, Street } from './types';
 
 interface PlayerState extends PlayerSnapshot {
@@ -12,10 +14,8 @@ interface CreateEngineOptions {
   random?: () => number;
   stacks?: Partial<Record<string, number>>;
   initialDealerIndex?: number;
+  blinds?: BlindConfig;
 }
-
-const SMALL_BLIND = 20;
-const BIG_BLIND = 40;
 
 export class PokerEngine {
   private readonly players: PlayerState[];
@@ -27,12 +27,17 @@ export class PokerEngine {
   private street: Street = 'settled';
   private actingIndex: number | null = null;
   private currentBet = 0;
-  private minimumRaise = BIG_BLIND;
+  private minimumRaise = DEFAULT_BLINDS.bigBlind;
+  private readonly blinds: Readonly<BlindConfig>;
   private pendingPlayerIds = new Set<string>();
   private communityCards: Card[] = [];
   private handEvents: EngineEvent[] = [];
 
   private constructor(options: CreateEngineOptions, players: PlayerState[]) {
+    const blinds = options.blinds === undefined ? DEFAULT_BLINDS : options.blinds;
+    assertBlinds(blinds);
+    this.blinds = Object.freeze({ smallBlind: blinds.smallBlind, bigBlind: blinds.bigBlind });
+    this.minimumRaise = this.blinds.bigBlind;
     this.firstDeck = options.deck ?? null;
     this.random = options.random ?? Math.random;
     this.players = players;
@@ -40,14 +45,15 @@ export class PokerEngine {
   }
 
   public static createSixSeat(options: CreateEngineOptions = {}): PokerEngine {
-    return PokerEngine.createWithPlayers([
-      { id: 'ai-1', name: 'Nora' },
-      { id: 'ai-2', name: 'Miles' },
-      { id: 'ai-3', name: 'Aria' },
-      { id: 'ai-4', name: 'Leo' },
-      { id: 'ai-5', name: 'Sora' },
-      { id: 'player', name: '你' },
-    ], options);
+    const names: Record<string, string> = {
+      'ai-1': 'Nora',
+      'ai-2': 'Miles',
+      'ai-3': 'Aria',
+      'ai-4': 'Leo',
+      'ai-5': 'Sora',
+      player: '你',
+    };
+    return PokerEngine.createWithPlayers(CLOCKWISE_SEAT_IDS.map((id) => ({ id, name: names[id] })), options);
   }
 
   public static createWithPlayers(players: readonly { id: string; name: string }[], options: CreateEngineOptions = {}): PokerEngine {
@@ -81,7 +87,7 @@ export class PokerEngine {
     this.dealerIndex = this.nextPlayingIndex(this.dealerIndex);
     this.communityCards = [];
     this.currentBet = 0;
-    this.minimumRaise = BIG_BLIND;
+    this.minimumRaise = this.blinds.bigBlind;
     this.street = 'preflop';
 
     for (const player of this.players) {
@@ -96,8 +102,8 @@ export class PokerEngine {
       ? this.dealerIndex
       : this.nextPlayingIndex(this.dealerIndex);
     const bigBlindIndex = this.nextPlayingIndex(smallBlindIndex);
-    this.postForcedBet(smallBlindIndex, SMALL_BLIND);
-    this.postForcedBet(bigBlindIndex, BIG_BLIND);
+    this.postForcedBet(smallBlindIndex, this.blinds.smallBlind);
+    this.postForcedBet(bigBlindIndex, this.blinds.bigBlind);
 
     for (const player of this.players) {
       if (player.folded) {
@@ -178,9 +184,30 @@ export class PokerEngine {
     return events;
   }
 
+  /** Remove an ordinary departing player's eligibility immediately, without skipping a live opponent's turn. */
+  public forceFoldPlayer(playerId: string): EngineEvent[] {
+    if (this.street === 'settled') return [];
+    const player = this.players.find(candidate => candidate.id === playerId);
+    if (!player) throw new Error(`Unknown player: ${playerId}`);
+    // An all-in departure retains every main/side-pot right until the hand settles.
+    if (player.folded || player.allIn || player.holeCards.length === 0) return [];
+    if (this.actingPlayer?.id === playerId) return this.act({ type: 'fold' });
+
+    player.folded = true;
+    this.pendingPlayerIds.delete(playerId);
+    const events: EngineEvent[] = [{ handId: this.handId, type: 'action-taken', playerId, action: { type: 'fold' }, amount: 0 }];
+    const active = this.activePlayers();
+    if (active.length === 1) this.settleEarly(active[0], events);
+    else if (this.pendingPlayerIds.size === 0) this.advance(events);
+    // Otherwise the current actor remains pending and keeps its existing action deadline.
+    this.handEvents.push(...events);
+    return events;
+  }
+
   public snapshot(): EngineSnapshot {
     return {
       handId: this.handId,
+      blinds: { ...this.blinds },
       street: this.street,
       actingPlayerId: this.actingPlayer?.id ?? null,
       dealerPlayerId: this.street === 'settled' ? null : this.players[this.dealerIndex]?.id ?? null,
@@ -272,7 +299,7 @@ export class PokerEngine {
         player.streetContribution = 0;
       }
       this.currentBet = 0;
-      this.minimumRaise = BIG_BLIND;
+      this.minimumRaise = this.blinds.bigBlind;
     }
 
     this.pendingPlayerIds = new Set(this.eligibleToAct().map((player) => player.id));

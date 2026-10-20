@@ -13,6 +13,7 @@ profiles/
 # NPM
 #//////////////////////////
 node_modules/
+server/data/
 
 #//////////////////////////
 # VSCode

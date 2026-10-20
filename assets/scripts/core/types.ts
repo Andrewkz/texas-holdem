@@ -1,3 +1,5 @@
+import type { BlindConfig } from './Blinds';
+
 export const SUITS = ['S', 'H', 'D', 'C'] as const;
 export const RANKS = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14] as const;
 
@@ -29,6 +31,8 @@ export interface PlayerSnapshot {
 }
 
 export interface EngineSnapshot {
+  /** Present on live snapshots; optional for legacy stored fixtures. */
+  blinds?: BlindConfig;
   handId: number;
   street: Street;
   actingPlayerId: string | null;

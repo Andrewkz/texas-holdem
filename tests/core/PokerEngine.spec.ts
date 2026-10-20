@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import { Deck } from '../../assets/scripts/core/Deck';
 import { PokerEngine } from '../../assets/scripts/core/PokerEngine';
+import { getPokerSeatLayout } from '../../assets/scripts/ui/PokerUiTheme';
 
 function engine(): PokerEngine {
   return PokerEngine.createSixSeat({ deck: new Deck(() => 0.5) });
@@ -19,12 +20,99 @@ function takePassiveAction(game: PokerEngine): void {
 }
 
 describe('PokerEngine', () => {
+  it('matches the physical clockwise seat order starting at the top seat', () => {
+    const clockwise = getPokerSeatLayout()
+      .sort((a, b) => ((Math.atan2(a.x, a.y) + 2 * Math.PI) % (2 * Math.PI))
+        - ((Math.atan2(b.x, b.y) + 2 * Math.PI) % (2 * Math.PI)))
+      .map(({ id }) => id);
+    expect(clockwise).toEqual(['ai-1', 'ai-3', 'ai-4', 'player', 'ai-5', 'ai-2']);
+    expect(engine().snapshot().players.map(({ id }) => id)).toEqual(clockwise);
+  });
+
+  it('posts blinds clockwise and follows the complete clockwise order on each street', () => {
+    const game = engine();
+    const started = game.startHand();
+    expect(started.dealerPlayerId).toBe('ai-1');
+    expect(started.players.find(({ id }) => id === 'ai-3')?.streetContribution).toBe(20);
+    expect(started.players.find(({ id }) => id === 'ai-4')?.streetContribution).toBe(40);
+
+    for (const [street, expected] of [
+      ['preflop', ['player', 'ai-5', 'ai-2', 'ai-1', 'ai-3', 'ai-4']],
+      ['flop', ['ai-3', 'ai-4', 'player', 'ai-5', 'ai-2', 'ai-1']],
+      ['turn', ['ai-3', 'ai-4', 'player', 'ai-5', 'ai-2', 'ai-1']],
+      ['river', ['ai-3', 'ai-4', 'player', 'ai-5', 'ai-2', 'ai-1']],
+    ] as const) {
+      const actors: string[] = [];
+      while (game.snapshot().street === street) {
+        actors.push(game.snapshot().actingPlayerId!);
+        takePassiveAction(game);
+      }
+      expect(actors).toEqual(expected);
+    }
+    expect(game.snapshot().street).toBe('settled');
+    expect(game.snapshot().players.reduce((sum, player) => sum + player.stack, 0)).toBe(30000);
+  });
+
+  it('rotates the button through every physical seat clockwise', () => {
+    const game = engine();
+    const dealers: string[] = [];
+    for (let hand = 0; hand < 7; hand += 1) {
+      dealers.push(game.startHand().dealerPlayerId!);
+      while (game.snapshot().street !== 'settled') game.act({ type: 'fold' });
+    }
+    expect(dealers).toEqual(['ai-1', 'ai-3', 'ai-4', 'player', 'ai-5', 'ai-2', 'ai-1']);
+  });
+
+  it('skips empty physical seats for blinds, action and the next button', () => {
+    const game = PokerEngine.createSixSeat({ random: () => 0.5, stacks: { 'ai-3': 0, 'ai-5': 0 } });
+    const first = game.startHand();
+    expect(first.dealerPlayerId).toBe('ai-1');
+    expect(first.players.find(({ id }) => id === 'ai-4')?.streetContribution).toBe(20);
+    expect(first.players.find(({ id }) => id === 'player')?.streetContribution).toBe(40);
+    expect(first.actingPlayerId).toBe('ai-2');
+    while (game.snapshot().street === 'preflop') takePassiveAction(game);
+    expect(game.snapshot().actingPlayerId).toBe('ai-4');
+    while (game.snapshot().street !== 'settled') game.act({ type: 'fold' });
+    expect(game.startHand().dealerPlayerId).toBe('ai-4');
+  });
+
+  it('keeps dealer as small blind and big blind first after the flop with two occupied seats', () => {
+    const game = PokerEngine.createSixSeat({
+      random: () => 0.5,
+      stacks: { 'ai-1': 0, 'ai-3': 0, 'ai-4': 0, 'ai-5': 0 },
+    });
+    const first = game.startHand();
+    expect(first.dealerPlayerId).toBe('player');
+    expect(first.players.find(({ id }) => id === 'player')?.streetContribution).toBe(20);
+    expect(first.players.find(({ id }) => id === 'ai-2')?.streetContribution).toBe(40);
+    expect(first.actingPlayerId).toBe('player');
+    takePassiveAction(game);
+    takePassiveAction(game);
+    expect(game.snapshot().street).toBe('flop');
+    expect(game.snapshot().actingPlayerId).toBe('ai-2');
+  });
+
+  it('automatically posts a short big blind all-in and skips it in the action order', () => {
+    const game = PokerEngine.createSixSeat({ random: () => 0.5, stacks: { 'ai-4': 25 } });
+    const first = game.startHand();
+    expect(first.players.find(({ id }) => id === 'ai-4')).toMatchObject({
+      stack: 0, allIn: true, streetContribution: 25,
+    });
+    expect(first.actingPlayerId).toBe('player');
+    const actors: string[] = [];
+    while (game.snapshot().street === 'preflop') {
+      actors.push(game.snapshot().actingPlayerId!);
+      takePassiveAction(game);
+    }
+    expect(actors).toEqual(['player', 'ai-5', 'ai-2', 'ai-1', 'ai-3']);
+  });
+
   it('collects blinds and exposes legal preflop actions to the next active player', () => {
     const game = engine();
     const state = game.startHand();
 
     expect(state.pot).toBe(60);
-    expect(state.actingPlayerId).toBe('ai-4');
+    expect(state.actingPlayerId).toBe('player');
     expect(state.legalActions).toContainEqual({ type: 'call', amount: 40 });
     expect(() => game.act({ type: 'check' })).toThrow('Illegal action');
   });
@@ -40,7 +128,7 @@ describe('PokerEngine', () => {
     const state = game.snapshot();
     expect(state.street).toBe('flop');
     expect(state.communityCards).toHaveLength(3);
-    expect(state.actingPlayerId).toBe('ai-2');
+    expect(state.actingPlayerId).toBe('ai-3');
   });
 
   it('awards all contributed chips when every opponent folds', () => {
@@ -60,16 +148,16 @@ describe('PokerEngine', () => {
     expect(game.snapshot().pot).toBe(0);
   });
 
-  it('puts a short stack all-in when it cannot cover the big blind', () => {
+  it('lets the first actor cover a call with a short all-in', () => {
     const game = PokerEngine.createSixSeat({
       deck: new Deck(() => 0.5),
-      stacks: { 'ai-4': 25 },
+      stacks: { player: 25 },
     });
     game.startHand();
 
     game.act({ type: 'all-in' });
 
-    expect(game.snapshot().players.find(({ id }) => id === 'ai-4')).toMatchObject({
+    expect(game.snapshot().players.find(({ id }) => id === 'player')).toMatchObject({
       stack: 0,
       allIn: true,
       totalContribution: 25,
@@ -85,11 +173,11 @@ describe('PokerEngine', () => {
 
     expect(events).toContainEqual(expect.objectContaining({
       type: 'action-taken',
-      playerId: 'ai-4',
+      playerId: 'player',
       action: { type: 'raise', to: 160 },
       amount: 160,
     }));
-    expect(game.snapshot().players.find(({ id }) => id === 'ai-4')).toMatchObject({
+    expect(game.snapshot().players.find(({ id }) => id === 'player')).toMatchObject({
       streetContribution: 160,
       stack: 4840,
     });

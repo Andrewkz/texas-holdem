@@ -1,0 +1,36 @@
+schema: spec-driven
+
+context: |
+  Language: Chinese
+  All artifacts must be written in Chinese.
+  Keep OpenSpec structural headings and SHALL/MUST keywords in English.
+  Project: Texas Hold'em, built with Cocos Creator 3.8.8 and TypeScript.
+  Runtime: Node.js >=22, ws, pnpm, Vitest; Nginx serves site/ and proxies /ws.
+  Product: private rooms for 2-6 real players, virtual chips only, mobile landscape first.
+  Rules: fixed blinds 20/40, initial stack 5000; preserve the existing solo AI mode.
+  Approved roadmap: docs/superpowers/specs/2026-10-16-friends-poker-roadmap.md.
+  Phase 1 plan: docs/superpowers/plans/2026-10-16-friends-poker-phase-1.md.
+  These documents describe planned capabilities; do not treat them as implemented.
+  Production deployments require authorization for the release being performed.
+
+# Per-artifact rules (optional)
+# Add custom rules for specific artifacts.
+# Example:
+#   rules:
+#     proposal:
+#       - Keep proposals under 500 words
+#       - Always state what is out of scope
+#     tasks:
+#       - Break tasks into chunks of max 2 hours
+
+# Per-operation guidance (optional)
+# Add advisory guidance for how apply and archive work should be conducted.
+# This is separate from artifact rules above.
+# Example:
+#   operations:
+#     apply:
+#       guidance:
+#         - Keep test summaries concise
+#     archive:
+#       guidance:
+#         - Summarize the archive outcome before finishing

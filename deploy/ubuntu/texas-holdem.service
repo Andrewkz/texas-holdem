@@ -1,0 +1,26 @@
+[Unit]
+Description=Texas Holdem WebSocket Server
+After=network.target
+
+[Service]
+Type=simple
+User=ubuntu
+Group=ubuntu
+WorkingDirectory=/opt/texas-holdem/current/server
+Environment=NODE_ENV=production
+Environment=HOST=127.0.0.1
+Environment=PORT=2567
+Environment=POKER_DATA_DIR=/var/lib/texas-holdem
+Environment=PATH=/home/ubuntu/.nvm/versions/node/v22.18.0/bin:/usr/local/bin:/usr/bin:/bin
+ExecStart=/home/ubuntu/.nvm/versions/node/v22.18.0/bin/node /opt/texas-holdem/current/server/node_modules/tsx/dist/cli.mjs src/index.ts
+Restart=on-failure
+RestartSec=3
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=read-only
+StateDirectory=texas-holdem
+StateDirectoryMode=0700
+
+[Install]
+WantedBy=multi-user.target

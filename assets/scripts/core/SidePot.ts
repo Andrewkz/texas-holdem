@@ -10,9 +10,9 @@ export interface Pot {
 }
 
 export function buildPots(contributions: Contribution[]): Pot[] {
-  const levels = [...new Set(contributions
+  const levels = Array.from(new Set(contributions
     .map(({ amount }) => amount)
-    .filter((amount) => amount > 0))]
+    .filter((amount) => amount > 0)))
     .sort((left, right) => left - right);
   let previous = 0;
 

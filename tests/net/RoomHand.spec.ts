@@ -1,9 +1,10 @@
+import { sendCommand, setBoundaryStacks } from './v3Commands';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { PokerEngine } from '../../assets/scripts/core/PokerEngine';
 import { PlayerAction } from '../../assets/scripts/core/types';
 import { RoomManager } from '../../server/src/RoomManager';
-import { createRoom, joinRoom } from './fakes';
+import { connect, createRoom, joinRoom } from './fakes';
 
 function createManager(): RoomManager {
   return new RoomManager({ betweenHandsMs: 100, actionTimeoutMs: 10_000, reconnectWindowMs: 10_000 });
@@ -12,7 +13,7 @@ function createManager(): RoomManager {
 function startTwoPlayerGame(manager: RoomManager) {
   const alice = createRoom(manager);
   const bob = joinRoom(manager, alice.joined.roomCode, 'Bob');
-  manager.handleMessage(alice.connection, { type: 'startGame' });
+  sendCommand(manager, alice.connection, { type: 'startGame' });
   return { alice, bob };
 }
 
@@ -24,7 +25,7 @@ function passiveAction(manager: RoomManager, connection: Parameters<RoomManager[
     throw new Error('expected a passive legal action');
   }
 
-  manager.handleMessage(connection, { type: 'action', action });
+  sendCommand(manager, connection, { type: 'action', action });
 }
 
 describe('room hand flow', () => {
@@ -72,10 +73,10 @@ describe('room hand flow', () => {
     const acting = sync.snapshot.actingPlayerId === alice.joined.playerId ? alice : bob;
     const waiting = acting === alice ? bob : alice;
 
-    manager.handleMessage(waiting.connection, { type: 'action', action: { type: 'fold' } });
+    sendCommand(manager, waiting.connection, { type: 'action', action: { type: 'fold' } });
     expect(waiting.connection.last('error')?.code).toBe('not-your-turn');
 
-    manager.handleMessage(acting.connection, { type: 'action', action: { type: 'raise', to: 10 } });
+    sendCommand(manager, acting.connection, { type: 'action', action: { type: 'raise', to: 10 } });
     expect(acting.connection.last('error')?.code).toBe('illegal-action');
   });
 
@@ -87,7 +88,7 @@ describe('room hand flow', () => {
     const acting = sync.snapshot.actingPlayerId === alice.joined.playerId ? alice : bob;
     const call = sync.snapshot.legalActions.find((action) => action.type === 'call');
 
-    manager.handleMessage(acting.connection, { type: 'action', action: call ?? { type: 'check' } });
+    sendCommand(manager, acting.connection, { type: 'action', action: call ?? { type: 'check' } });
 
     const taken = bob.connection.last('actionTaken')!;
     expect(taken.playerId).toBe(acting.joined.playerId);
@@ -106,7 +107,7 @@ describe('room hand flow', () => {
       }
 
       const acting = byId[sync.snapshot.actingPlayerId!];
-      passiveAction(manager, acting.connection, sync.snapshot.legalActions);
+      passiveAction(manager, acting.connection, acting.connection.last('stateSync')!.snapshot.legalActions);
     }
 
     expect(alice.connection.last('stateSync')!.snapshot.street).toBe('settled');
@@ -133,7 +134,7 @@ describe('room hand flow', () => {
 
     const sync = alice.connection.last('stateSync')!;
     const acting = sync.snapshot.actingPlayerId === alice.joined.playerId ? alice : bob;
-    manager.handleMessage(acting.connection, { type: 'action', action: { type: 'fold' } });
+    sendCommand(manager, acting.connection, { type: 'action', action: { type: 'fold' } });
 
     const result = bob.connection.last('handResult')!;
     expect(result.payouts).toHaveLength(1);
@@ -155,11 +156,11 @@ describe('room hand flow', () => {
     const acting = sync.snapshot.actingPlayerId === alice.joined.playerId ? alice : bob;
     const waiting = acting === alice ? bob : alice;
 
-    manager.handleMessage(acting.connection, { type: 'action', action: { type: 'all-in' } });
+    sendCommand(manager, acting.connection, { type: 'action', action: { type: 'all-in' } });
 
-    const call = alice.connection.last('stateSync')!.snapshot.legalActions
+    const call = waiting.connection.last('stateSync')!.snapshot.legalActions
       .find((action) => action.type === 'call')!;
-    manager.handleMessage(waiting.connection, { type: 'action', action: call });
+    sendCommand(manager, waiting.connection, { type: 'action', action: call });
 
     const result = alice.connection.last('handResult')!;
     expect(bob.connection.last('handResult')).toEqual(result);
@@ -185,7 +186,7 @@ describe('room hand flow', () => {
     const alice = createRoom(manager);
     const bob = joinRoom(manager, alice.joined.roomCode, 'Bob');
     const carol = joinRoom(manager, alice.joined.roomCode, 'Carol');
-    manager.handleMessage(alice.connection, { type: 'startGame' });
+    sendCommand(manager, alice.connection, { type: 'startGame' });
 
     expect(alice.connection.last('handStart')!.dealerPlayerId).toBe(alice.joined.playerId);
 
@@ -198,11 +199,11 @@ describe('room hand flow', () => {
     for (let folds = 0; folds < 2; folds += 1) {
       const sync = alice.connection.last('stateSync')!;
       const acting = byId[sync.snapshot.actingPlayerId!];
-      manager.handleMessage(acting.connection, { type: 'action', action: { type: 'fold' } });
+      sendCommand(manager, acting.connection, { type: 'action', action: { type: 'fold' } });
     }
     expect(alice.connection.last('handResult')).toBeDefined();
 
-    manager.handleMessage(alice.connection, { type: 'leaveRoom' });
+    sendCommand(manager, alice.connection, { type: 'leaveRoom' });
     vi.advanceTimersByTime(60_000);
 
     // Alice 离开后庄家应从 Alice(p1) 轮转给 Bob(p2)，而不是因为数组下标漂移错给 Carol
@@ -215,12 +216,12 @@ describe('room hand flow', () => {
 
     const sync = alice.connection.last('stateSync')!;
     const acting = sync.snapshot.actingPlayerId === alice.joined.playerId ? alice : bob;
-    manager.handleMessage(acting.connection, { type: 'action', action: { type: 'fold' } });
+    sendCommand(manager, acting.connection, { type: 'action', action: { type: 'fold' } });
     expect(alice.connection.last('handResult')).toBeDefined();
     expect(vi.getTimerCount()).toBe(1);
 
-    manager.handleMessage(alice.connection, { type: 'leaveRoom' });
-    manager.handleMessage(bob.connection, { type: 'leaveRoom' });
+    sendCommand(manager, alice.connection, { type: 'leaveRoom' });
+    sendCommand(manager, bob.connection, { type: 'leaveRoom' });
 
     expect(manager.roomCount()).toBe(0);
     expect(vi.getTimerCount()).toBe(0);
@@ -236,10 +237,10 @@ describe('room hand flow', () => {
     const sync = alice.connection.last('stateSync')!;
     const acting = sync.snapshot.actingPlayerId === alice.joined.playerId ? alice : bob;
     const waiting = acting === alice ? bob : alice;
-    manager.handleMessage(acting.connection, { type: 'action', action: { type: 'all-in' } });
-    const call = alice.connection.last('stateSync')!.snapshot.legalActions
+    sendCommand(manager, acting.connection, { type: 'action', action: { type: 'all-in' } });
+    const call = waiting.connection.last('stateSync')!.snapshot.legalActions
       .find((action) => action.type === 'call')!;
-    manager.handleMessage(waiting.connection, { type: 'action', action: call });
+    sendCommand(manager, waiting.connection, { type: 'action', action: call });
     rng.mockRestore();
     expect(alice.connection.last('handResult')).toBeDefined();
 
@@ -247,7 +248,7 @@ describe('room hand flow', () => {
     vi.advanceTimersByTime(150);
     expect(alice.connection.last('roomState')!.room.phase).toBe('lobby');
 
-    manager.handleMessage(alice.connection, { type: 'startGame' });
+    sendCommand(manager, alice.connection, { type: 'startGame' });
     expect(alice.connection.last('error')?.code).toBe('bad-message');
     expect(alice.connection.last('roomState')!.room.phase).toBe('lobby');
   });
@@ -257,15 +258,12 @@ describe('room hand flow', () => {
     const alice = createRoom(manager);
     const bob = joinRoom(manager, alice.joined.roomCode, 'Bob');
 
-    // 篡改座位筹码，构造双盲即全押的极端局面
-    const room = (manager as unknown as { rooms: Map<string, { players: { id: string; stack: number }[] }> })
-      .rooms.get(alice.joined.roomCode)!;
-    room.players.find((player) => player.id === alice.joined.playerId)!.stack = 20;
-    room.players.find((player) => player.id === bob.joined.playerId)!.stack = 40;
+    const room = manager.getRoom(alice.joined.sessionId)!;
+    setBoundaryStacks(room,{[alice.joined.playerId]:20,[bob.joined.playerId]:40});
 
     // 固定洗牌结果，保证这手牌分出胜负（输家清零）
     const rng = vi.spyOn(Math, 'random').mockReturnValue(0.5);
-    manager.handleMessage(alice.connection, { type: 'startGame' });
+    sendCommand(manager, alice.connection, { type: 'startGame' });
     rng.mockRestore();
 
     // heads-up 小盲即庄家；引擎直接跑完结算时快照没有庄家，从盲注事件找回
@@ -298,7 +296,7 @@ describe('room hand flow', () => {
     });
     const errorLog = vi.spyOn(console, 'error').mockImplementation(() => undefined);
 
-    manager.handleMessage(alice.connection, { type: 'startGame' });
+    sendCommand(manager, alice.connection, { type: 'startGame' });
 
     expect(errorLog).toHaveBeenCalled();
     expect(alice.connection.last('roomState')!.room.phase).toBe('lobby');
@@ -306,5 +304,160 @@ describe('room hand flow', () => {
 
     spy.mockRestore();
     errorLog.mockRestore();
+  });
+});
+
+
+describe('recipient hand participation', () => {
+  beforeEach(() => vi.useFakeTimers());
+  afterEach(() => vi.useRealTimers());
+
+  it('gives a late joiner public state immediately and no cards or actions on every push', () => {
+    const manager = createManager();
+    const { alice, bob } = startTwoPlayerGame(manager);
+    const byId = { [alice.joined.playerId]: alice, [bob.joined.playerId]: bob };
+    for (let i = 0; i < 2; i++) {
+      const id = alice.connection.last('stateSync')!.snapshot.actingPlayerId!;
+      const actor = byId[id];
+      passiveAction(manager, actor.connection, actor.connection.last('stateSync')!.snapshot.legalActions);
+    }
+    const carol = joinRoom(manager, alice.joined.roomCode, 'Carol');
+    expect(carol.connection.last('stateSync')?.snapshot.street).toBe('flop');
+    expect(carol.connection.last('handStart')?.participantIds).toEqual([alice.joined.playerId, bob.joined.playerId]);
+    expect(carol.connection.sent.filter(m => m.type !== 'hello' && m.type !== 'roomLookup')[0].type).toBe('joined');
+    const before = carol.connection.last('stateSync')!.snapshot;
+    sendCommand(manager, carol.connection, { type: 'action', action: { type: 'all-in' } });
+    expect(carol.connection.last('error')?.code).toBe('not-your-turn');
+    expect(carol.connection.last('stateSync')!.snapshot).toEqual(before);
+    for (let i = 0; i < 3; i++) {
+      const actor = byId[alice.connection.last('stateSync')!.snapshot.actingPlayerId!];
+      passiveAction(manager, actor.connection, actor.connection.last('stateSync')!.snapshot.legalActions);
+    }
+    expect(carol.connection.sent.filter(m => m.type === 'stateSync').length).toBeGreaterThan(1);
+    for (const m of carol.connection.sent) if (m.type === 'stateSync') {
+      expect(m.participation).toBe('waiting-next-hand');
+      expect(m.snapshot.legalActions).toEqual([]);
+    }
+    expect(carol.connection.last('yourHand')).toBeUndefined();
+    for (const peer of [alice, bob]) {
+      const sync = peer.connection.last('stateSync')!;
+      expect(sync.participation).toBe('playing-hand');
+      expect(sync.snapshot.legalActions.length > 0).toBe(sync.snapshot.actingPlayerId === peer.joined.playerId);
+    }
+  });
+
+  it('replays the frozen participant list and recipient permissions after another participant folds', () => {
+    const manager = createManager();
+    const alice = createRoom(manager);
+    const bob = joinRoom(manager, alice.joined.roomCode, 'Bob');
+    const carol = joinRoom(manager, alice.joined.roomCode, 'Carol');
+    sendCommand(manager, alice.connection, { type: 'startGame' });
+    expect(alice.connection.last('stateSync')!.snapshot.actingPlayerId).toBe(alice.joined.playerId);
+    sendCommand(manager, alice.connection, { type: 'action', action: { type: 'fold' } });
+    expect(bob.connection.last('stateSync')!.snapshot.actingPlayerId).toBe(bob.joined.playerId);
+    manager.handleClose(carol.connection);
+
+    const back = connect(manager);
+    sendCommand(manager, back, { type: 'reconnect', roomCode: alice.joined.roomCode, token: carol.joined.token });
+    expect(back.last('handStart')!.participantIds).toEqual([alice.joined.playerId, bob.joined.playerId, carol.joined.playerId]);
+    expect(back.last('yourHand')!.cards).toHaveLength(2);
+    const restored = back.last('stateSync')!;
+    expect(restored.snapshot.players.find(player => player.id === alice.joined.playerId)?.folded).toBe(true);
+    expect(restored.participation).toBe('playing-hand');
+    expect(restored.snapshot.actingPlayerId).toBe(bob.joined.playerId);
+    expect(restored.snapshot.legalActions).toEqual([]);
+    expect(alice.connection.last('stateSync')!.participation).toBe('playing-hand');
+    expect(alice.connection.last('stateSync')!.snapshot.legalActions).toEqual([]);
+    expect(bob.connection.last('stateSync')!.snapshot.legalActions.length).toBeGreaterThan(0);
+  });
+
+  it('does not reset an existing action deadline on recovery at 29 seconds', () => {
+    const manager = new RoomManager({ betweenHandsMs: 60_000 });
+    const { alice, bob } = startTwoPlayerGame(manager);
+    const actor = alice.connection.last('stateSync')!.snapshot.actingPlayerId === alice.joined.playerId ? alice : bob;
+    vi.advanceTimersByTime(29_000);
+    manager.handleClose(actor.connection);
+    const back = connect(manager);
+    sendCommand(manager, back, { type: 'reconnect', roomCode: alice.joined.roomCode, token: actor.joined.token });
+    vi.advanceTimersByTime(1000);
+    expect(back.last('actionTaken')?.playerId).toBe(actor.joined.playerId);
+    expect(back.last('actionTaken')?.action.type).toBe('fold');
+  });
+});
+
+
+describe('frozen hand identities', () => {
+  beforeEach(() => vi.useFakeTimers());
+  afterEach(() => vi.useRealTimers());
+
+  it('keeps a three-player departed identity separate from its waiting replacement until the next hand', () => {
+    const manager = new RoomManager({ actionTimeoutMs: 60_000, betweenHandsMs: 100 });
+    const alice = createRoom(manager);
+    const bob = joinRoom(manager, alice.joined.roomCode, 'Bob');
+    const carol = joinRoom(manager, alice.joined.roomCode, 'Carol');
+    sendCommand(manager, alice.connection, { type: 'startGame' });
+    const originalIds = [alice.joined.playerId, bob.joined.playerId, carol.joined.playerId];
+    expect(alice.connection.last('stateSync')!.snapshot.actingPlayerId).toBe(alice.joined.playerId);
+    sendCommand(manager, bob.connection, { type: 'leaveRoom' });
+    const dave = joinRoom(manager, alice.joined.roomCode, 'Dave');
+    const initial = dave.connection.last('stateSync')!;
+    expect(dave.joined.room.seats.map(seat => seat.nickname)).toEqual(['Alice', 'Carol', 'Dave']);
+    expect(dave.connection.last('handStart')!.participantIds).toEqual(originalIds);
+    expect(initial.snapshot.players.find(player => player.id === bob.joined.playerId)?.name).toBe('Bob');
+    expect(initial.snapshot.players.some(player => player.id === dave.joined.playerId)).toBe(false);
+    expect(initial.participation).toBe('waiting-next-hand');
+    expect(initial.snapshot.legalActions).toEqual([]);
+    expect(dave.connection.last('yourHand')).toBeUndefined();
+
+    sendCommand(manager, dave.connection, { type: 'action', action: { type: 'all-in' } });
+    expect(dave.connection.last('error')?.code).toBe('not-your-turn');
+    expect(dave.connection.last('stateSync')).toEqual(initial);
+    const call = alice.connection.last('stateSync')!.snapshot.legalActions.find(action => action.type === 'call');
+    expect(call).toBeDefined();
+    sendCommand(manager, alice.connection, { type: 'action', action: call! });
+    expect(dave.connection.last('stateSync')!.snapshot.players.find(player => player.id === bob.joined.playerId))
+      .toMatchObject({ name: 'Bob', folded: true });
+    expect(dave.connection.last('stateSync')!.snapshot.actingPlayerId).toBe(carol.joined.playerId);
+    sendCommand(manager, carol.connection, { type: 'action', action: { type: 'fold' } });
+    expect(dave.connection.last('stateSync')!.snapshot.street).toBe('settled');
+    for (const message of dave.connection.sent) if (message.type === 'stateSync') {
+      expect(message.participation).toBe('waiting-next-hand');
+      expect(message.snapshot.legalActions).toEqual([]);
+    }
+    expect(dave.connection.last('yourHand')).toBeUndefined();
+
+    vi.advanceTimersByTime(100);
+    expect(dave.connection.last('handStart')!.participantIds).toEqual([alice.joined.playerId, carol.joined.playerId, dave.joined.playerId]);
+    expect(dave.connection.last('yourHand')!.handId).toBe(2);
+    expect(dave.connection.last('yourHand')!.cards).toHaveLength(2);
+    expect(dave.connection.last('stateSync')!.participation).toBe('playing-hand');
+    expect(dave.connection.last('stateSync')!.snapshot.players.some(player => player.id === bob.joined.playerId)).toBe(false);
+  });
+
+  it('keeps departed players in the current public snapshot when a full table seat is reused', () => {
+    const manager = new RoomManager({ actionTimeoutMs: 60_000, betweenHandsMs: 100 });
+    const alice = createRoom(manager);
+    const peers = [alice, ...['Bob', 'Carol', 'Dave', 'Eve', 'Frank'].map(name => joinRoom(manager, alice.joined.roomCode, name))];
+    sendCommand(manager, alice.connection, { type: 'startGame' });
+    const originalIds = peers.map(peer => peer.joined.playerId);
+    sendCommand(manager, peers[1].connection, { type: 'leaveRoom' });
+    const grace = joinRoom(manager, alice.joined.roomCode, 'Grace');
+    expect(grace.connection.last('handStart')!.participantIds).toEqual(originalIds);
+    expect(grace.connection.last('stateSync')!.snapshot.players.find(p => p.id === peers[1].joined.playerId)?.name).toBe('Bob');
+    expect(grace.joined.room.seats.some(p => p.playerId === peers[1].joined.playerId)).toBe(false);
+    expect(grace.connection.last('stateSync')!.participation).toBe('waiting-next-hand');
+    expect(grace.connection.last('yourHand')).toBeUndefined();
+    const byId = Object.fromEntries([...peers, grace].map(peer => [peer.joined.playerId, peer]));
+    for (let guard = 0; guard < 6; guard++) {
+      const sync = grace.connection.last('stateSync')!.snapshot;
+      if (sync.street === 'settled') break;
+      sendCommand(manager, byId[sync.actingPlayerId!].connection, { type: 'action', action: { type: 'fold' } });
+    }
+    expect(grace.connection.last('stateSync')!.snapshot.street).toBe('settled');
+    vi.advanceTimersByTime(100);
+    expect(grace.connection.last('handStart')!.participantIds).toContain(grace.joined.playerId);
+    expect(grace.connection.last('handStart')!.participantIds).not.toContain(peers[1].joined.playerId);
+    expect(grace.connection.last('yourHand')!.cards).toHaveLength(2);
+    expect(grace.connection.last('stateSync')!.participation).toBe('playing-hand');
   });
 });

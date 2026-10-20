@@ -1,4 +1,4 @@
-export type HomeScreen = 'home' | 'rules' | 'settings' | 'online-setup' | 'online-lobby' | 'starting' | 'playing' | 'return-confirmation';
+export type HomeScreen = 'home' | 'rules' | 'settings' | 'online-setup' | 'online-restoring' | 'online-lobby' | 'online-left' | 'online-settlement' | 'starting' | 'playing' | 'return-confirmation';
 
 export interface HomeFlowState {
   screen: HomeScreen;
@@ -14,6 +14,13 @@ export type HomeFlowEvent =
   | { type: 'request-return'; confirmReset: boolean }
   | { type: 'cancel-return' }
   | { type: 'confirm-return' }
+  | { type: 'begin-online-restore' }
+  | { type: 'restore-failed' }
+  | { type: 'online-back-to-lobby' }
+  | { type: 'left-online-seat' }
+  | { type: 'session-ended' }
+  | { type: 'close-session-result' }
+  | { type: 'request-rejoin' }
   | { type: 'open-online' }
   | { type: 'close-online' }
   | { type: 'entered-lobby' }
@@ -25,7 +32,20 @@ export function createHomeFlow(): HomeFlowState {
 }
 
 export function reduceHomeFlow(state: HomeFlowState, event: HomeFlowEvent): HomeFlowState {
+  const onlineResult = state.screen === 'online-left' || state.screen === 'online-settlement';
+  if (event.type === 'session-ended' && ['online-setup', 'online-restoring', 'online-lobby', 'online-left', 'playing', 'return-confirmation'].indexOf(state.screen) !== -1) {
+    return { screen: 'online-settlement', sessionActive: false };
+  }
+  if (event.type === 'left-online-seat' && ['online-lobby', 'playing', 'return-confirmation'].indexOf(state.screen) !== -1) {
+    return { screen: 'online-left', sessionActive: false };
+  }
+  if (onlineResult && event.type === 'close-session-result') return createHomeFlow();
+  if (state.screen === 'online-left' && event.type === 'request-rejoin') return { screen: 'online-restoring', sessionActive: false };
+  if (event.type === 'online-back-to-lobby' && (state.screen === 'playing' || state.screen === 'return-confirmation')) {
+    return { screen: 'online-lobby', sessionActive: false };
+  }
   if (state.screen === 'home') {
+    if (event.type === 'begin-online-restore') return { screen: 'online-restoring', sessionActive: false };
     if (event.type === 'open-rules') {
       return { screen: 'rules', sessionActive: false };
     }
@@ -44,7 +64,8 @@ export function reduceHomeFlow(state: HomeFlowState, event: HomeFlowEvent): Home
     return createHomeFlow();
   }
 
-  if (state.screen === 'online-setup') {
+  if (state.screen === 'online-restoring' && event.type === 'restore-failed') return { screen: 'online-setup', sessionActive: false };
+  if (state.screen === 'online-setup' || state.screen === 'online-restoring') {
     if (event.type === 'close-online') {
       return createHomeFlow();
     }

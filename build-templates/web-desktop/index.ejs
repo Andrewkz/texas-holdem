@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+
+    <title>POKER CLUB · 德州扑克</title>
+
+    <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
+    <meta name="theme-color" content="#07111f"/>
+    <meta name="description" content="POKER CLUB 六人德州扑克，支持单机练习与好友联机，使用虚拟筹码。"/>
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <meta name="mobile-web-app-capable" content="yes"/>
+    <meta name="full-screen" content="yes"/>
+    <meta name="x5-fullscreen" content="true"/>
+    <meta name="360-fullscreen" content="true"/>
+    <meta name="screen-orientation" content="landscape"/>
+    <meta name="x5-orientation" content="landscape"/>
+    <meta name="x5-page-mode" content="app"/>
+
+    <meta name="renderer" content="webkit"/>
+    <meta name="force-rendering" content="webkit"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+
+    <link rel="stylesheet" type="text/css" href="<%= cssUrl %>"/>
+    <link rel="icon" href="favicon.ico"/>
+  </head>
+  <body>
+    <main class="game-shell" aria-label="POKER CLUB 德州扑克">
+      <div id="GameDiv" cc_exact_fit_screen="false">
+        <div id="Cocos3dGameContainer">
+          <canvas id="GameCanvas" width="1280" height="720" tabindex="0" aria-label="德州扑克游戏画面">请使用支持 HTML5 Canvas 的浏览器打开游戏。</canvas>
+        </div>
+      </div>
+    </main>
+    <script src="landscape.js"></script>
+    <noscript>请开启浏览器的 JavaScript 以开始游戏。</noscript>
+<% const cocosBoot = include(cocosTemplate, {}); if (cocosBoot.split('System.import(').length !== 2) { throw new Error('Expected one Cocos bootstrap import'); } %>
+    <%- cocosBoot.replace('System.import(', 'if (!window.__pokerLandscapeHost) System.import(') %>
+  </body>
+</html>
